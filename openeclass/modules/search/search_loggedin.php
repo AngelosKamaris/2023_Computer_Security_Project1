@@ -40,6 +40,13 @@ $require_current_course = FALSE;
 $nameTools = $langSearch;
 $tool_content = "";
 
+$mysqli = new mysqli($mysqlServer, $mysqlUser, $mysqlPassword, $mysqlMainDb);
+
+if ($mysqli->connect_errno) {
+    include "include/not_installed.php";
+}
+mysqli_query($mysqli,"SET NAMES utf8");
+var_dump($mysqli);
 
 //elegxos ean *yparxoun* oroi anazhthshs
 if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_terms_instructor) && empty($search_terms_coursecode)) {
@@ -92,14 +99,18 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 	//ektelesh erwthmatos gia to se poia mathimata einai eggegramenos o xrhsths. sta apotelesmata perilamvanontai
 	//kai ola ta anoixta kai anoixta me eggrafh mathimata.
 
-	$result = mysql_query("SELECT DISTINCT * FROM (
-		SELECT  cours.code, cours.intitule, cours.course_keywords, cours.titulaires
-		FROM cours, cours_user  WHERE cours.cours_id = cours_user.cours_id AND cours_user.user_id = $uid
+	$stmt = $mysqli->prepare("SELECT DISTINCT * FROM (
+		SELECT cours.code, cours.intitule, cours.course_keywords, cours.titulaires
+		FROM cours, cours_user WHERE cours.cours_id = cours_user.cours_id AND cours_user.user_id = ?
 		UNION
-		SELECT  cours.code, cours.intitule, cours.course_keywords, cours.titulaires
+		SELECT cours.code, cours.intitule, cours.course_keywords, cours.titulaires
 		FROM cours
-		WHERE cours.visible IN ('1','2')
-		) As lala");
+		WHERE cours.visible IN ('1', '2')
+	) As lala");
+
+	$stmt->bind_param("i", $uid);
+	$stmt->execute();
+	$result = $stmt->get_result();
 
 
 	$results_found = 0; //arithmos apotelesmatwn pou exoun emfanistei (ena gia kathe grammh tou $mycours)
@@ -116,7 +127,7 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 
     $k = 0;
     $tbl_content = "";
-    while ($mycours = mysql_fetch_array($result))
+    while ($mycours = mysqli_fetch_array($result))
     {
 	    $show_entry = FALSE; //flag gia emfanish apotelesmatwn se mia grammh tou array efoson entopistoun apotelesmata
 		if (!empty($search_terms_title)) $show_entry = match_arrays($search_terms_title, $mycours['intitule']);

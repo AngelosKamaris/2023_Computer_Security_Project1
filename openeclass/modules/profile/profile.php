@@ -37,16 +37,32 @@ $nameTools = $langModifProfile;
 check_guest();
 $allow_username_change = !get_config('block-username-change');
 
+$mysqli = new mysqli($mysqlServer, $mysqlUser, $mysqlPassword, $mysqlMainDb);
+
+if ($mysqli->connect_errno) {
+    include "include/not_installed.php";
+}
+mysqli_query($mysqli,"SET NAMES utf8");
+var_dump($mysqli);
+
 if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
         if (!$allow_username_change) {
                 $username_form = $uname;
         }
 	// check if username exists
-	$username_check=mysql_query("SELECT username FROM user WHERE username='".escapeSimple($username_form)."'");
-	while ($myusername = mysql_fetch_array($username_check))
-	{
+	// $username_check=mysql_query("SELECT username FROM user WHERE username='".escapeSimple($username_form)."'");
+	// while ($myusername = mysql_fetch_array($username_check))
+	// {
+	// 	$user_exist=$myusername[0];
+	// }
+	$stmt = $mysqli->prepare("SELECT username FROM `{$mysqlMainDb}`.user WHERE username = ?");
+	$stmt->bind_param("s", escapeSimple($username_form));
+	$stmt->execute();
+	$result = $stmt->get_result();
+	if ($myusername = $result->fetch_array()) {
 		$user_exist=$myusername[0];
 	}
+	$stmt->close();
 
 	// check if there are empty fields
 	if (empty($nom_form) OR empty($prenom_form) OR empty($username_form)) {
@@ -83,17 +99,23 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 		$langcode = langname_to_code($language);
 
 		$username_form = escapeSimple($username_form);
-		if(mysql_query("UPDATE user
-	        SET nom='$nom_form', prenom='$prenom_form',
-	        username='$username_form', email='$email_form', am='$am_form',
-	            perso='$persoStatus', lang='$langcode'
-	        WHERE user_id='".$_SESSION["uid"]."'")) {
-			if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
-                		unset($_SESSION['user_perso_active']);
+		$stmt = $mysqli->prepare("UPDATE user
+			SET nom=?, prenom=?,
+			username=?, email=?, am=?,
+			perso=?, lang=?
+			WHERE user_id=?");
+
+		$stmt->bind_param("sssssssi", $nom_form, $prenom_form, $username_form, $email_form, $am_form, $persoStatus, $langcode, $_SESSION["uid"]);
+
+		if($stmt->execute()) {
+			if (isset($_SESSION['user_perso_active']) && $persoStatus == "no") {
+				unset($_SESSION['user_perso_active']);
 			}
-			header("location:". $_SERVER['PHP_SELF']."?msg=1");
+			$stmt->close();
+			header("location: " . $_SERVER['PHP_SELF'] . "?msg=1");
+			
 			exit();
-	        }
+		}
 	}
 }	// if submit
 
@@ -101,15 +123,17 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 if (isset($submit) && isset($ldap_submit) && ($ldap_submit == "ON")) {
 	$_SESSION['langswitch'] = $language = langcode_to_name($_REQUEST['userLanguage']);
 	$langcode = langname_to_code($language);
-
-	mysql_query("UPDATE user SET perso = '$persoStatus',
-		lang = '$langcode' WHERE user_id='".$_SESSION["uid"]."' ");
+	$stmt->execute();
+	$stmt->close();
+	$stmt = $mysqli->prepare("UPDATE user SET perso=?, lang=? WHERE user_id=?");
+	$stmt->bind_param("ssi", $persoStatus, $langcode, $_SESSION["uid"]);
 	
 	if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
 		unset($_SESSION['user_perso_active']);
 	}
 
 	header("location:". $_SERVER['PHP_SELF']."?msg=1");
+	
 	exit();
 }
 ##[END personalisation modification]############
@@ -161,10 +185,13 @@ if(isset($msg))
 
 }
 
-$sqlGetInfoUser ="SELECT nom, prenom, username, password, email, am, perso, lang
-    FROM user WHERE user_id='".$uid."'";
-$result=mysql_query($sqlGetInfoUser);
-$myrow = mysql_fetch_array($result);
+$sqlGetInfoUser = "SELECT nom, prenom, username, password, email, am, perso, lang
+    FROM user WHERE user_id=?";
+$stmt = $mysqli->prepare($sqlGetInfoUser);
+$stmt->bind_param('i', $uid);
+$stmt->execute();
+$result = $stmt->get_result();
+$myrow = $result->fetch_array(MYSQLI_ASSOC);
 
 $nom_form = $myrow['nom'];
 $prenom_form = $myrow['prenom'];
@@ -182,6 +209,8 @@ if ($persoStatus == "yes")  {
 	$checkedClassic  = "";
 	$checkedPerso = "checked";
 }
+
+$stmt->close();
 
 ##[END personalisation modification]############
 

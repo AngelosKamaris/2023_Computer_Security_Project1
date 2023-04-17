@@ -45,6 +45,13 @@ $nameTools = $langUserDetails;
 // Main body
 $navigation[] = array("url"=>"registration.php", "name"=> $langNewUser);
 
+$mysqli = new mysqli($mysqlServer, $mysqlUser, $mysqlPassword, $mysqlMainDb);
+
+if ($mysqli->connect_errno) {
+    include "include/not_installed.php";
+}
+mysqli_query($mysqli,"SET NAMES utf8");
+var_dump($mysqli);
 $tool_content = "";	// Initialise $tool_content
 
 if (isset($close_user_registration) and $close_user_registration == TRUE) {
@@ -137,11 +144,19 @@ if (!isset($submit)) {
 		$registration_errors[] = $langEmptyFields;
 	} else {
 	// check if the username is already in use
-		$q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='".escapeSimple($uname)."'";
-		$username_check = mysql_query($q2);
-		if ($myusername = mysql_fetch_array($username_check)) {
+		// $q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='".escapeSimple($uname)."'";
+		// $username_check = mysql_query($q2);
+		// if ($myusername = mysql_fetch_array($username_check)) {
+		// 	$registration_errors[] = $langUserFree;
+		// }
+		$stmt = $mysqli->prepare("SELECT username FROM `{$mysqlMainDb}`.user WHERE username = ?");
+		$stmt->bind_param("s", escapeSimple($uname));
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($myusername = $result->fetch_assoc()) {
 			$registration_errors[] = $langUserFree;
 		}
+		$stmt->close();
 	}
 	if (!empty($email) and !email_seems_valid($email)) {
 		$registration_errors[] = $langEmailWrong;
@@ -197,20 +212,46 @@ if (!isset($submit)) {
 	} else {
 		$password_encrypted = $password;
 	}
+	// $q1 = "INSERT INTO `$mysqlMainDb`.user
+	// (user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
+	// VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email','5',
+	// 	'$department','$am',".$registered_at.",".$expires_at.",'$lang')";
+	// echo "<br> query is:". $q1;
+	// $inscr_user = mysql_query($q1);
+	// $last_id = mysql_insert_id();
+	// $result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");
+	// while ($myrow = mysql_fetch_array($result)) {
+	// 	$uid=$myrow[0];
+	// 	$nom=$myrow[1];
+	// 	$prenom=$myrow[2];
+	// }
+	// mysql_query("INSERT INTO `$mysqlMainDb`.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
+	// VALUES ('', '".$uid."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
-	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
-	VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email','5',
-		'$department','$am',".$registered_at.",".$expires_at.",'$lang')";
-	$inscr_user = mysql_query($q1);
-	$last_id = mysql_insert_id();
-	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");
-	while ($myrow = mysql_fetch_array($result)) {
+    (user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
+    VALUES (NULL, ?, ?, ?, ?, ?, 5, ?, ?, ?, ?, ?)";
+	echo "<br> query is:". $q1;
+
+	$stmt = mysqli_prepare($mysqli, $q1);
+	mysqli_stmt_bind_param($stmt, 'ssssssssss', $nom_form, $prenom_form, $uname, $password_encrypted, $email, $department, $am, $registered_at, $expires_at, $lang);
+	$inscr_user = mysqli_stmt_execute($stmt);
+	$last_id = mysqli_insert_id($mysqli);
+
+	$result=mysqli_query($mysqli, "SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");
+	while ($myrow = mysqli_fetch_array($result)) {
 		$uid=$myrow[0];
 		$nom=$myrow[1];
 		$prenom=$myrow[2];
 	}
-	mysql_query("INSERT INTO `$mysqlMainDb`.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
-	VALUES ('', '".$uid."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
+	$stmt->close();
+
+	$stmt2 = $mysqli->prepare("INSERT INTO `$mysqlMainDb`.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action) VALUES ('', ?, ?, NOW(), 'LOGIN')");
+
+	$stmt2->bind_param('is', $uid, $REMOTE_ADDR);
+
+	$stmt2->execute();
+	$stmt2->close();
+
 	$_SESSION['uid'] = $uid;
 	$_SESSION['statut'] = 5;
 	$_SESSION['prenom'] = $prenom;

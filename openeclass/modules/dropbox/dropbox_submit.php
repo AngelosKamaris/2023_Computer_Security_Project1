@@ -76,6 +76,14 @@ $_SESSION['dropbox_uniqueid'] = $dropbox_uniqueid;
 
 require_once("dropbox_class.inc.php");
 
+$mysqli = new mysqli($mysqlServer, $mysqlUser, $mysqlPassword, $mysqlMainDb);
+
+if ($mysqli->connect_errno) {
+    include "include/not_installed.php";
+}
+mysqli_query($mysqli,"SET NAMES utf8");
+var_dump($mysqli);
+
 /*
  * ========================================
  * FORM SUBMIT
@@ -241,19 +249,22 @@ if (isset($_GET['mailingIndex']))  // examine or send
 	if (!preg_match($dropbox_cnf["mailingZipRegexp"], $mailing_title, $nameParts))
 	{
 		$var = strtoupper($nameParts[2]);  // the variable part of the name
-		$sel = "SELECT u.user_id, u.nom, u.prenom, cu.statut
-				FROM `".$mysqlMainDb."`.`user` u
-				LEFT JOIN `".$mysqlMainDb."`.`cours_user` cu
-				ON cu.user_id = u.user_id AND cu.cours_id = $cours_id";
-		$sel .= " WHERE u.".$dropbox_cnf["mailingWhere".$var]." = '";
+		$sql = "SELECT u.user_id, u.nom, u.prenom, cu.statut
+        FROM `" . $mysqlMainDb . "`.`user` u
+        LEFT JOIN `" . $mysqlMainDb . "`.`cours_user` cu
+        ON cu.user_id = u.user_id AND cu.cours_id = ?
+        WHERE u." . $dropbox_cnf["mailingWhere" . $var] . " = ?";
+		$stmt = $mysqli->prepare($sql);
+		$stmt->bind_param("is", $cours_id, $dropbox_cnf["mailingWhere" . $var]);
+		$stmt->execute();
 
 		function getUser($thisRecip)
 		{
 			global $dropbox_lang, $var, $sel;
 			unset($students);
 
-			$result = db_query($sel);
-			while (($res = mysql_fetch_array($result))) {$students[] = $res;}
+			$result = $stmt->get_result();
+			while (($res = mysqli_fetch_array($result))) {$students[] = $res;}
 			mysql_free_result($result);
 
 			if (count($students) == 1)
@@ -381,18 +392,27 @@ if (isset($_GET['mailingIndex']))  // examine or send
 
 			// find student course members not among the recipients
 
-			$sql = "SELECT u.nom, u.prenom
+			$stmt = $mysqli->prepare("SELECT u.nom, u.prenom
 					FROM `".$mysqlMainDb."`.`cours_user` cu
 					LEFT JOIN  `".$mysqlMainDb."`.`user` u
-					ON cu.user_id = u.user_id AND cu.cours_id = $cours_id
+					ON cu.user_id = u.user_id AND cu.cours_id = ?
 					WHERE cu.statut = 5
-					AND u.user_id NOT IN ('" . implode("', '" , $students) . "')";
-			$result = db_query($sql);
+					AND u.user_id NOT IN (".str_repeat('?,', count($students)-1) . "?)");
 
-			if ( mysql_num_rows($result) > 0)
+			
+			$params = array_merge(array(str_repeat('s', count($students))), $students, array($cours_id));
+			call_user_func_array(array($stmt, 'bind_param'), $params);
+
+			// Execute the query
+			$stmt->execute();
+
+			// Get the result set
+			$result = $stmt->get_result();
+
+			if ( mysqli_num_rows($result) > 0)
 			{
 				$remainingUsers = '';
-				while ( ($res = mysql_fetch_array($result)))
+				while ( ($res = mysqli_fetch_array($result)))
 				{
 					$remainingUsers .= ', ' . htmlspecialchars($res[0].' '.$res[1]);
 				}
@@ -422,11 +442,17 @@ if (isset($_GET['mailingIndex']))  // examine or send
 
 				$sendDT = addslashes(date("Y-m-d H:i:s",time()));
 				// set filesize to zero on send, to avoid 2nd send (see index.php)
-				$sql = "UPDATE `".$dropbox_cnf["fileTbl"]."`
-						SET filesize = '0'
-						, uploadDate = '".$sendDT."', lastUploadDate = '".$sendDT."'
-						WHERE id='".addslashes($mailing_item->id)."'";
-				$result = mysql_query($sql) or die($dropbox_lang["queryError"]);
+				$sql = "UPDATE `" . $dropbox_cnf["fileTbl"] . "`
+						SET filesize = '0', uploadDate = ?, lastUploadDate = ?
+						WHERE id = ?";
+				$stmt = $mysqli->prepare($sql);
+				if ($stmt) {
+					$stmt->bind_param("sss", $sendDT, $sendDT, $mailing_item->id);
+					$stmt->execute();
+					$stmt->close();
+				} else {
+					die($dropbox_lang["queryError"]);
+				}
 			}
 			elseif ( $mailing_item->filesize != 0)
 			{

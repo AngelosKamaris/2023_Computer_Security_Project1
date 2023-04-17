@@ -37,6 +37,14 @@ $require_current_course = FALSE;
 $nameTools = $langSearch;
 $tool_content = "";
 
+$mysqli = new mysqli($mysqlServer, $mysqlUser, $mysqlPassword, $mysqlMainDb);
+
+if ($mysqli->connect_errno) {
+    include "include/not_installed.php";
+}
+mysqli_query($mysqli,"SET NAMES utf8");
+var_dump($mysqli);
+
 //elegxos ean *yparxoun* oroi anazhthshs
 if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_terms_instructor) && empty($search_terms_coursecode)) {
 /**********************************************************************************************
@@ -85,7 +93,9 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 ***********************************************************************************************/
 
 	//to pedio visible exei times 2 kai 1 gia Public kai Open mathimata
-	$result = mysql_query("SELECT * FROM cours WHERE visible='2' OR visible='1'");
+	$stmt = $mysqli->prepare("SELECT * FROM cours WHERE visible='2' OR visible='1'");
+	$stmt->execute();
+	$result = $stmt->get_result();
 
 	$results_found = 0; //arithmos apotelesmatwn pou exoun emfanistei (ena gia kathe grammh tou $mycours)
 
@@ -103,7 +113,7 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 
     $k = 0;
     $tbl_content = "";
-    while ($mycours = mysql_fetch_array($result))
+    while ($mycours = mysqli_fetch_array($result))
     {
 		$show_entry = FALSE; //flag gia emfanish apotelesmatwn se mia grammh tou array efoson entopistoun apotelesmata
 

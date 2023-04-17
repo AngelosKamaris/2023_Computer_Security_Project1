@@ -45,6 +45,15 @@ check_uid();
 $tool_content = "";
 $passurl = $urlSecure.'modules/profile/password.php';
 
+$mysqli = new mysqli($mysqlServer, $mysqlUser, $mysqlPassword, $mysqlMainDb);
+
+if ($mysqli->connect_errno) {
+    include "include/not_installed.php";
+}
+mysqli_query($mysqli,"SET NAMES utf8");
+var_dump($mysqli);
+
+
 if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 
 	if (empty($_REQUEST['password_form']) || empty($_REQUEST['password_form1']) || empty($_REQUEST['old_pass'])) {
@@ -58,10 +67,12 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 	}
 
 	// check if passwd is too easy
-	$sql = "SELECT `nom`,`prenom` ,`username`,`email`,`am` FROM `user`WHERE `user_id`=".$_SESSION["uid"]." ";
-	$result = db_query($sql, $mysqlMainDb);
-	$myrow = mysql_fetch_array($result);
-
+	$stmt = $mysqli->prepare("SELECT nom, prenom, username, email, am FROM user WHERE user_id=?");
+	$stmt->bind_param("i", $_SESSION["uid"]);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$myrow = $result->fetch_assoc();
+	$stmt->close();
 	if ((strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['nom']))
 	|| (strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['prenom']))
 	|| (strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['username']))
@@ -72,18 +83,25 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 	}
 
 	//all checks ok. Change password!
-	$sql = "SELECT `password` FROM `user` WHERE `user_id`=".$_SESSION["uid"]." ";
-	$result = db_query($sql, $mysqlMainDb);
-	$myrow = mysql_fetch_array($result);
-
+	$sql = "SELECT `password` FROM `user` WHERE `user_id`=?";
+	$stmt = $mysqli->prepare($sql);
+	$stmt->bind_param("i", $_SESSION["uid"]);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$myrow = $result->fetch_assoc();
+	$stmt->close();
 	$old_pass = md5($_REQUEST['old_pass']) ;
 	$old_pass_db = $myrow['password'];
 	$new_pass = md5($_REQUEST['password_form']);
 
 	if($old_pass == $old_pass_db) {
 
-		$sql = "UPDATE `user` SET `password` = '$new_pass' WHERE `user_id` = ".$_SESSION["uid"]."";
-		db_query($sql, $mysqlMainDb);
+		$sql = "UPDATE `user` SET `password` = ? WHERE `user_id` = ?";
+		$stmt = $mysqli->prepare($sql);
+		$stmt->bind_param("si", $new_pass, $_SESSION["uid"]);
+		$stmt->execute();
+		$stmt->close();
+
 		header("location:". $passurl."?msg=4");
 		exit();
 	} else {

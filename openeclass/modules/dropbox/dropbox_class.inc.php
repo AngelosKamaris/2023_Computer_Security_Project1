@@ -85,7 +85,15 @@ class Dropbox_Work {
 		/*
 		* private function creating a new work object
 		*/
-		global $dropbox_cnf, $dropbox_lang, $currentCourseID;
+		global $dropbox_cnf, $dropbox_lang, $currentCourseID, $mysqlServer, $mysqlUser, $mysqlPassword;
+
+		$mysqli = new mysqli($mysqlServer, $mysqlUser, $mysqlPassword, $currentCourseID);
+
+		if ($mysqli->connect_errno) {
+			include "include/not_installed.php";
+		}
+		mysqli_query($mysqli,"SET NAMES utf8");
+		var_dump($mysqli);
 		
 		/*
 		* Do some sanity checks
@@ -110,17 +118,20 @@ class Dropbox_Work {
 		*/
 		$this->isOldWork = FALSE;
 		if ($GLOBALS['language'] == 'greek') {
-			$sql="SELECT id, DATE_FORMAT(uploadDate, '%d-%m-%Y / %H:%i')
-				FROM `".$dropbox_cnf["fileTbl"]."` 
-				WHERE filename = '".addslashes($this->filename)."'";
+			$sql = "SELECT id, DATE_FORMAT(uploadDate, '%d-%m-%Y / %H:%i') FROM `" . $dropbox_cnf["fileTbl"] . "` WHERE filename = ?";
 		} else {
-			$sql="SELECT id, DATE_FORMAT(uploadDate, '%Y-%m-d% / %H:%i')
-				FROM `".$dropbox_cnf["fileTbl"]."` 
-				WHERE filename = '".addslashes($this->filename)."'";
+			$sql = "SELECT id, DATE_FORMAT(uploadDate, '%Y-%m-d% / %H:%i') FROM `" . $dropbox_cnf["fileTbl"] . "` WHERE filename = ?";
 		}
-        	$result = db_query($sql,$currentCourseID);
-		$res = mysql_fetch_array($result);
-		if ($res != FALSE) $this->isOldWork = TRUE;
+
+		$stmt = $mysqli->prepare($sql);
+		$stmt->bind_param("s", $this->filename);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$res = $result->fetch_array(MYSQLI_ASSOC);
+
+		if ($res != NULL) {
+			$this->isOldWork = TRUE;
+		}
 		
 		/*
 		* insert or update the dropbox_file table and set the id property
@@ -128,42 +139,35 @@ class Dropbox_Work {
 		if ($this->isOldWork) {
 			$this->id = $res["id"];
 			$this->uploadDate = $res["uploadDate"];
-		    $sql = "UPDATE `".$dropbox_cnf["fileTbl"]."`
-					SET filesize = '".addslashes($this->filesize)."'
-					, title = '".addslashes($this->title)."'
-					, description = '".addslashes($this->description)."'
-					, author = '".addslashes($this->author)."'
-					, lastUploadDate = '".addslashes($this->lastUploadDate)."'
-					WHERE id='".addslashes($this->id)."'";
-			$result = db_query($sql);
+			$sql = "UPDATE `" . $dropbox_cnf["fileTbl"] . "` 
+					SET filesize = ?, 
+						title = ?, 
+						description = ?, 
+						author = ?, 
+						lastUploadDate = ? 
+					WHERE id = ?";
+			$stmt = $mysqli->prepare($sql);
+			$stmt->bind_param("issssi", $this->filesize, $this->title, $this->description, $this->author, $this->lastUploadDate, $this->id);
+			$stmt->execute();
 		} else {
 			$this->uploadDate = $this->lastUploadDate;
-			$sql="INSERT INTO `".$dropbox_cnf["fileTbl"]."` 
-				(uploaderId, filename, filesize, title, description, author, uploadDate, lastUploadDate)
-				VALUES ('".addslashes($this->uploaderId)."'
-						, '".addslashes($this->filename)."'
-						, '".addslashes($this->filesize)."'
-						, '".addslashes($this->title)."'
-						, '".addslashes($this->description)."'
-						, '".addslashes($this->author)."'
-						, '".addslashes($this->uploadDate)."'
-						, '".addslashes($this->lastUploadDate)."'
-						)";
-
-        	$result = db_query($sql);		
-			$this->id = mysql_insert_id(); //get automatically inserted id
+			$sql = "INSERT INTO `" . $dropbox_cnf["fileTbl"] . "` 
+					(uploaderId, filename, filesize, title, description, author, uploadDate, lastUploadDate)
+					VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+			$stmt = $mysqli->prepare($sql);
+			$stmt->bind_param("isssssss", $this->uploaderId, $this->filename, $this->filesize, $this->title, $this->description, $this->author, $this->uploadDate, $this->lastUploadDate);
+			$stmt->execute();
+			$this->id = $mysqli->insert_id; //get automatically inserted id
 		}
 		
 		
 		/*
 		* insert entries into person table
 		*/
-		$sql="INSERT INTO `".$dropbox_cnf["personTbl"]."` 
-				(fileId, personId)
-				VALUES ('".addslashes($this->id)."'
-						, '".addslashes($this->uploaderId)."'
-						)";
-        $result = db_query($sql);	//if work already exists no error is generated
+		$sql = "INSERT INTO `" . $dropbox_cnf["personTbl"] . "` (fileId, personId) VALUES (?, ?)";
+		$stmt = $mysqli->prepare($sql);
+		$stmt->bind_param("ii", $this->id, $this->uploaderId);
+		$stmt->execute();
 	}
 	
 	function _createExistingWork ($id) {

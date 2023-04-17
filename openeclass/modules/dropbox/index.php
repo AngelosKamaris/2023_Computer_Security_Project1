@@ -45,6 +45,14 @@ $action = new action();
 $action->record('MODULE_ID_DROPBOX');
 /**************************************/
 
+$mysqli = new mysqli($mysqlServer, $mysqlUser, $mysqlPassword, $mysqlMainDb);
+
+if ($mysqli->connect_errno) {
+    include "include/not_installed.php";
+}
+mysqli_query($mysqli,"SET NAMES utf8");
+var_dump($mysqli);
+
 $tool_content .="
 <div id=\"operations_container\">
   <ul id=\"opslist\">
@@ -166,11 +174,15 @@ tCont2;
 
 	{
 		// select all users except yourself
-		$sql = "SELECT DISTINCT u.user_id , CONCAT(u.nom,' ', u.prenom) AS name
-        	FROM `" . $dropbox_cnf["userTbl"] . "` u, `" . $dropbox_cnf["courseUserTbl"] . "` cu
-        	WHERE cu.cours_id = $dropbox_cnf[cid]
-        	AND cu.user_id = u.user_id AND u.user_id != $uid
-        	ORDER BY UPPER(u.nom), UPPER(u.prenom)";
+		$sql = "SELECT DISTINCT u.user_id, CONCAT(u.nom, ' ', u.prenom) AS name
+        FROM `" . $dropbox_cnf["userTbl"] . "` u, `" . $dropbox_cnf["courseUserTbl"] . "` cu
+        WHERE cu.cours_id = ?
+        AND cu.user_id = u.user_id AND u.user_id != ?
+        ORDER BY UPPER(u.nom), UPPER(u.prenom)";
+		$stmt = $mysqli->prepare($sql);
+		
+
+		$stmt->bind_param("ii", $dropbox_cnf["cid"], $uid);
 	}
 	/*
 	* if current user is student then show all teachers of current course
@@ -178,14 +190,20 @@ tCont2;
 	else
 	{
 		// select all the teachers except yourself
-		$sql = "SELECT DISTINCT u.user_id , CONCAT(u.nom,' ', u.prenom) AS name
-        	FROM `" . $dropbox_cnf["userTbl"] . "` u, `" . $dropbox_cnf["courseUserTbl"] . "` cu
-        	WHERE cu.cours_id = $dropbox_cnf[cid]
-        	AND cu.user_id = u.user_id AND (cu.statut <> 5 OR cu.tutor = 1) AND u.user_id != $uid
-        	ORDER BY UPPER(u.nom), UPPER(u.prenom)";
+		$sql = "SELECT DISTINCT u.user_id, CONCAT(u.nom, ' ', u.prenom) AS name
+        FROM `" . $dropbox_cnf["userTbl"] . "` u, `" . $dropbox_cnf["courseUserTbl"] . "` cu
+        WHERE cu.cours_id = ?
+        AND cu.user_id = u.user_id AND (cu.statut <> 5 OR cu.tutor = 1) AND u.user_id != ?
+        ORDER BY UPPER(u.nom), UPPER(u.prenom)";
+		$stmt = $mysqli->prepare($sql);
+
+		// Bind the parameters to the prepared statement
+		$stmt->bind_param("ii", $dropbox_cnf["cid"], $uid);
 	}
-	$result = db_query($sql);
-	while ($res = mysql_fetch_array($result))
+
+	$stmt->execute();
+	$result = $stmt->get_result();
+	while ($res = mysqli_fetch_array($result))
 	{
 		$tool_content .= "
            <option value=".$res['user_id'].">".$res['name']."</option>";

@@ -48,29 +48,37 @@ $tool_content = "";
 
 // first check
 // check if we can connect to database. If not then eclass is most likely not installed
-if (isset($mysqlServer) and isset($mysqlUser) and isset($mysqlPassword)) {
-	$db = mysql_connect($mysqlServer, $mysqlUser, $mysqlPassword);
-	if (mysql_version()) mysql_query("SET NAMES utf8");
+// if (isset($mysqlServer) and isset($mysqlUser) and isset($mysqlPassword)) {
+// 	$db = mysql_connect($mysqlServer, $mysqlUser, $mysqlPassword);
+// 	if (mysql_version()) mysql_query("SET NAMES utf8");
+// }
+// if (!$db) {
+// 	include "include/not_installed.php";
+// }
+
+$mysqli = new mysqli($mysqlServer, $mysqlUser, $mysqlPassword, $mysqlMainDb);
+
+if ($mysqli->connect_errno) {
+    include "include/not_installed.php";
 }
-if (!$db) {
-	include "include/not_installed.php";
-}
+mysqli_query($mysqli,"SET NAMES utf8");
+var_dump($mysqli);
 
 // unset system that records visitor only once by course for statistics
 include('include/action.php');
-if (isset($dbname)) {
-        mysql_select_db($dbname);
-        $action = new action();
-        $action->record('MODULE_ID_UNITS', 'exit');
-}
-unset($dbname);
+// if (isset($dbname)) {
+//         mysql_select_db($dbname);
+//         $action = new action();
+//         $action->record('MODULE_ID_UNITS', 'exit');
+// }
+// unset($dbname);
 
 // second check
 // can we select a database? if not then there is some sort of a problem
-if (isset($mysqlMainDb)) $selectResult = mysql_select_db($mysqlMainDb,$db);
-if (!isset($selectResult)) {
-	include "include/not_installed.php";
-}
+// if (isset($mysqlMainDb)) $selectResult = mysql_select_db($mysqlMainDb,$db);
+// if (!isset($selectResult)) {
+// 	include "include/not_installed.php";
+// }
 
 //if platform admin allows usage of eclass personalised
 //create a session so that each user can activate it for himself.
@@ -96,9 +104,17 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 
 	if(!empty($submit)) {
 		unset($uid);
-		$sqlLogin= "SELECT user_id, nom, username, password, prenom, statut, email, perso, lang
-			FROM user WHERE username='".$uname."'";
-		$result = mysql_query($sqlLogin);
+		// $sqlLogin= "SELECT user_id, nom, username, password, prenom, statut, email, perso, lang
+		// 	FROM user WHERE username='".$uname."'";
+		// $result = mysql_query($sqlLogin);
+		// var_dump($result);
+
+		$stmt = $mysqli->prepare("SELECT user_id, nom, username, password, prenom, statut, email, perso, lang
+		FROM user WHERE username= ?");
+		$stmt->bind_param("s", $uname);
+		$stmt->execute();
+		$result = $stmt->get_result();
+
 		$check_passwords = array("pop3","imap","ldap","db");
 		$warning = "";
 		$auth_allow = 0;
@@ -110,7 +126,8 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
                         // Disallow login with empty password
 			$auth_allow = 4;
 		} else {
-			while ($myrow = mysql_fetch_array($result)) {
+			while ($myrow = mysqli_fetch_array($result)) {
+				var_dump($myrow);
 				$exists = 1;
 				if(!empty($auth)) {
 					if(!in_array($myrow["password"],$check_passwords)) {
@@ -144,6 +161,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 					break;
 			}
 		} else {
+			echo"<br>here";
 			$warning = '';
 			$log='yes';
 			$_SESSION['nom'] = $nom;
@@ -152,8 +170,13 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 			$_SESSION['statut'] = $statut;
 			$_SESSION['is_admin'] = $is_admin;
 			$_SESSION['uid'] = $uid;
-			mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
-			VALUES ('', '$uid', '$_SERVER[REMOTE_ADDR]', NOW(), 'LOGIN')");
+			// mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
+			// VALUES ('', '$uid', '$_SERVER[REMOTE_ADDR]', NOW(), 'LOGIN')");
+
+			$stmt = $mysqli->prepare("INSERT INTO loginout (id_user, ip, `when`, action) VALUES (?, ?, NOW(), 'LOGIN')");
+			$stmt->bind_param("is", $uid, $_SERVER['REMOTE_ADDR']);
+			$stmt->execute();
+			$stmt->close();
 		}
 	
 		##[BEGIN personalisation modification]############
@@ -204,11 +227,17 @@ if (isset($uid) AND !isset($logout)) {
 			draw($tool_content,1,null,null,null,null,$perso_tool_content);
 		} else {
 			//if the user is a guest send him straight to the corresponding lesson
-			$guestSQL = db_query("SELECT code FROM cours_user, cours
-				              WHERE cours.cours_id = cours_user.cours_id AND
-                                                    user_id = $uid", $mysqlMainDb);
-			if (mysql_num_rows($guestSQL) > 0) {
-				$sql_row = mysql_fetch_row($guestSQL);
+			// $guestSQL = db_query("SELECT code FROM cours_user, cours
+			// 	              WHERE cours.cours_id = cours_user.cours_id AND
+            //                                         user_id = $uid", $mysqlMainDb);
+			$stmt = $mysqli->prepare("SELECT code FROM cours_user, cours
+			WHERE cours.cours_id = cours_user.cours_id AND
+								  user_id = ?, ?");
+			$stmt->bind_param("is", $uid, $mysqlMainDb);
+			$stmt->execute();
+			$guestSQL = $stmt->get_result();
+			if (mysqli_num_rows($guestSQL) > 0) {
+				$sql_row = mysqli_fetch_row($guestSQL);
 				$dbname=$sql_row[0];
 				session_register("dbname");
 				header("location:".$urlServer."courses/$dbname/index.php");
@@ -230,9 +259,13 @@ if (isset($uid) AND !isset($logout)) {
 // -------------------------------------------------------------------------------------
 elseif ((isset($logout) && isset($uid)) OR (1==1)) {
 	if (isset($logout) && isset($uid)) {
-		mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user,
-			loginout.ip, loginout.when, loginout.action)
-			VALUES ('', '$uid', '$REMOTE_ADDR', NOW(), 'LOGOUT')");
+		// mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user,
+		// 	loginout.ip, loginout.when, loginout.action)
+		// 	VALUES ('', '$uid', '$REMOTE_ADDR', NOW(), 'LOGOUT')");
+		$stmt = $mysqli->prepare("INSERT INTO loginout (id_user, ip, `when`, action) VALUES (?, ?, NOW(), 'LOGOUT')");
+		$stmt->bind_param("is", $uid, $_SERVER['REMOTE_ADDR']);
+		$stmt->execute();
+		$stmt->close();
 		unset($prenom);
 		unset($nom);
 		unset($statut);
