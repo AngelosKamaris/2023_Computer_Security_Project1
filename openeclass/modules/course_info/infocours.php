@@ -85,10 +85,31 @@ if (isset($_POST['submit'])) {
                 } else {
                         $password = "";
                 }
-
+                        
                 list($facid, $facname) = explode('--', $_POST['facu']);
+
+        
+                $title=$_POST['title'];
+                $description=$_POST['description'];
+                $course_addon=$_POST['course_addon'];
+                $course_keywords=$_POST['course_keywords'];
+                $visible=$_POST['formvisible'];
+                $titulaires=$_POST['titulary'];
+                $type=$_POST['type'];
+                $password=$_POST['password'];
+                $title = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+                $language = htmlspecialchars($language, ENT_QUOTES, 'UTF-8');
+                $intitule = htmlspecialchars($intitule, ENT_QUOTES, 'UTF-8');
+                $description = htmlspecialchars($description, ENT_QUOTES, 'UTF-8');
+                $course_addon = htmlspecialchars($course_addon, ENT_QUOTES, 'UTF-8');
+                $course_keywords = htmlspecialchars($course_keywords, ENT_QUOTES, 'UTF-8');
+                $facname = htmlspecialchars($facname, ENT_QUOTES, 'UTF-8');
+                $formvisible = htmlspecialchars($formvisible, ENT_QUOTES, 'UTF-8');
+                $titulaires = htmlspecialchars($titulaires, ENT_QUOTES, 'UTF-8');
+                $type = htmlspecialchars($type, ENT_QUOTES, 'UTF-8');
+                
                 db_query("UPDATE `$mysqlMainDb`.cours
-                          SET intitule = " . autoquote($_POST['title']) .",
+                          SET intitule = " . autoquote($title) .",
                               faculte = " . autoquote($facname) . ",
                               description = " . autoquote($_POST['description']) . ",
                               course_addon = " . autoquote($_POST['course_addon']) . ",

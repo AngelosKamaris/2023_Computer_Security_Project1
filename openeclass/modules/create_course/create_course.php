@@ -380,17 +380,28 @@ if (isset($_POST['create_course'])) {
         // ------------- update main Db------------
         mysql_select_db("$mysqlMainDb");
 
+		$db_code = htmlspecialchars($code, ENT_QUOTES, 'UTF-8');
+$language = htmlspecialchars($language, ENT_QUOTES, 'UTF-8');
+$intitule = htmlspecialchars($intitule, ENT_QUOTES, 'UTF-8');
+$description = htmlspecialchars($description, ENT_QUOTES, 'UTF-8');
+$course_addon = htmlspecialchars($course_addon, ENT_QUOTES, 'UTF-8');
+$course_keywords = htmlspecialchars($course_keywords, ENT_QUOTES, 'UTF-8');
+$facname = htmlspecialchars($facname, ENT_QUOTES, 'UTF-8');
+$formvisible = htmlspecialchars($formvisible, ENT_QUOTES, 'UTF-8');
+$titulaires = htmlspecialchars($titulaires, ENT_QUOTES, 'UTF-8');
+$type = htmlspecialchars($type, ENT_QUOTES, 'UTF-8');
+
         db_query("INSERT INTO cours SET
-                        code = '$code',
+                        code = '$db_code',
                         languageCourse =" . quote($language) . ",
                         intitule = " . quote($intitule) . ",
                         description = " . quote($description) . ",
-                        course_addon = " . quote($course_addon) . ",
-                        course_keywords = " . quote($course_keywords) . ",
+                        course_addon = " .quote($course_addon) . ",
+                        course_keywords = " . quote($course_keywords). ",
                         faculte = " . quote($facname) . ",
                         visible = " . quote($formvisible) . ",
                         titulaires = " . quote($titulaires) . ",
-                        fake_code = " . quote($code) . ",
+                        fake_code = " . quote($db_code) . ",
                         type = " . quote($type) . ",
                         faculteid = '$facid',
                         first_create = NOW()");
