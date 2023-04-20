@@ -83,8 +83,10 @@ if ($is_adminOfCourse || $is_admin) {
 	<li><a href='../forum_admin/forum_admin.php'>$langAdm</a></li>
 	</ul></div><br />";
 }
-
+$uid=mysql_real_escape_string($uid);
+$cours_id=mysql_real_escape_string($cours_id);
 if(isset($forumcatnotify)) { // modify forum category notification
+	$cat_id=mysql_real_escape_string($cat_id);	
 		$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
 			WHERE user_id = $uid AND cat_id = $cat_id AND course_id = $cours_id", $mysqlMainDb));
 		if ($rows > 0) {
@@ -95,6 +97,7 @@ if(isset($forumcatnotify)) { // modify forum category notification
 		cat_id = $cat_id, notify_sent = 1, course_id = $cours_id", $mysqlMainDb);
 	}
 } elseif(isset($forumnotify)) { // modify forum notification
+	$forum_id=mysql_real_escape_string($forum_id);
 	$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
 		WHERE user_id = $uid AND forum_id = $forum_id AND course_id = $cours_id", $mysqlMainDb));
 	if ($rows > 0) {
@@ -141,6 +144,7 @@ if ($total_categories) {
 	}
 	$limit_forums = "";
 	if ($viewcat != -1) {
+		$viewcat=mysql_real_escape_string($viewcat);
 		$limit_forums = "WHERE f.cat_id = $viewcat";
 	}
 	$sql = "SELECT f.*, p.post_time, p.nom, p.prenom, p.topic_id
@@ -161,6 +165,7 @@ if ($total_categories) {
 		}
 		$title = stripslashes($categories[$i]["cat_title"]);
 		$catNum = $categories[$i]["cat_id"];
+		$catNum=mysql_real_escape_string($catNum);
 		list($action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
 				WHERE user_id = $uid AND cat_id = $catNum AND course_id = $cours_id", $mysqlMainDb));
 		if (!isset($action_notify)) {
@@ -211,6 +216,7 @@ if ($total_categories) {
 				$tool_content .= "<td>";
 				$forum = $forum_row[$x]["forum_id"];
 				if ($is_adminOfCourse) { // admin
+					$forum=mysql_real_escape_string($forum);
 					$sqlTutor = db_query("SELECT id FROM student_group
 						WHERE forumId='$forum' AND tutor='$uid'", $currentCourseID );
 					$countTutor = mysql_num_rows($sqlTutor);
@@ -244,6 +250,7 @@ if ($total_categories) {
 				} else {
 					$tool_content .= "<font color='#CAC3B5'>$langNoPosts</font></td>";
 				}
+				$forum=mysql_real_escape_string($forum);
 				list($forum_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
 					WHERE user_id = $uid AND forum_id = $forum AND course_id = $cours_id", $mysqlMainDb));
 				if (!isset($forum_action_notify)) {

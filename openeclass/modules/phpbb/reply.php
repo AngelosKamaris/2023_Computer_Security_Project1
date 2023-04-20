@@ -73,19 +73,22 @@ hContent;
 
 include_once("./config.php");
 include("functions.php");
+$forum=mysql_real_escape_string($forum);
+$topic=mysql_real_escape_string($topic);
 
 if (isset($post_id) && $post_id) {
+	$post_id=mysql_real_escape_string($post_id);
 	// We have a post id, so include that in the checks..
 	$sql  = "SELECT f.forum_type, f.forum_name, f.forum_access, t.topic_title ";
 	$sql .= "FROM forums f, topics t, posts p ";
-	$sql .= "WHERE (f.forum_id = '$forum') AND (t.topic_id = $topic)";
-	$sql .= " AND (p.post_id = $post_id) AND (t.forum_id = f.forum_id)";
+	$sql .= "WHERE (f.forum_id = '$forum') AND (t.topic_id = '$topic')";
+	$sql .= " AND (p.post_id = '$post_id') AND (t.forum_id = f.forum_id)";
 	$sql .= " AND (p.forum_id = f.forum_id) AND (p.topic_id = t.topic_id)";
 } else {
 	// No post id, just check forum and topic.
 	$sql = "SELECT f.forum_type, f.forum_name, f.forum_access, t.topic_title ";
 	$sql .= "FROM forums f, topics t ";
-	$sql .= "WHERE (f.forum_id = '$forum') AND (t.topic_id = $topic) AND (t.forum_id = f.forum_id)";	
+	$sql .= "WHERE (f.forum_id = '$forum') AND (t.topic_id = '$topic') AND (t.forum_id = f.forum_id)";	
 }
 
 $result = db_query($sql, $currentCourseID);
@@ -157,6 +160,9 @@ if (isset($submit) && $submit) {
 	if ( (isset($allow_bbcode) && $allow_bbcode == 1) && !isset($bbcode)) {
 		$message = bbencode($message, $is_html_disabled);
 	}
+	$poster_ip=mysql_real_escape_string($poster_ip);
+	$nom=mysql_real_escape_string($nom);
+	$prenom=mysql_real_escape_string($prenom);
 	$message = format_message($message);
 	$time = date("Y-m-d H:i");
 	$nom = addslashes($nom);
@@ -171,6 +177,9 @@ if (isset($submit) && $submit) {
 	$result = db_query($sql, $currentCourseID);
 	$this_post = mysql_insert_id();
 	if ($this_post) {
+		$this_post=mysql_real_escape_string($this_post);
+		$message=mysql_real_escape_string($message);
+		$id=mysql_real_escape_string($id);
 		$sql = "INSERT INTO posts_text (post_id, post_text) VALUES ($this_post, " .
                         autoquote($message) . ")";
 		$result = db_query($sql, $currentCourseID); 
@@ -194,7 +203,7 @@ if (isset($submit) && $submit) {
 	$category_id = forum_category($forum);
 	$cat_name = category_name($category_id);
 	$sql = db_query("SELECT DISTINCT user_id FROM forum_notify 
-			WHERE (topic_id = $topic OR forum_id = $forum OR cat_id = $category_id) 
+			WHERE (topic_id = '$topic' OR forum_id = '$forum' OR cat_id = '$category_id') 
 			AND notify_sent = 1 AND course_id = $cours_id", $mysqlMainDb);
 	$c = course_code_to_title($currentCourseID);
 	$body_topic_notify = "$langCourse: '$c'\n\n$langBodyTopicNotify $langInForum '$topic_title' $langOfForum '$forum_name' $langInCat '$cat_name' \n\n$gunet";
@@ -269,6 +278,7 @@ if (isset($submit) && $submit) {
 	<tr>
         <th class=\"left\">$langBodyMessage:";
 	if (isset($quote) && $quote) {
+		$post=mysql_real_escape_string($post);
 		$sql = "SELECT pt.post_text, p.post_time, u.username 
 			FROM posts p, posts_text pt 
 			WHERE p.post_id = '$post' AND pt.post_id = p.post_id";

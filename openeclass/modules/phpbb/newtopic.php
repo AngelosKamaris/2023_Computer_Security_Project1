@@ -78,7 +78,7 @@ include("functions.php"); // application logic for phpBB
 /******************************************************************************
  * Actual code starts here
  *****************************************************************************/
-
+$forum=mysql_real_escape_string($forum);
 $sql = "SELECT forum_name, forum_access, forum_type FROM forums
 	WHERE (forum_id = '$forum')";
 if (!$result = db_query($sql, $currentCourseID)) {
@@ -134,9 +134,16 @@ if (isset($submit) && $submit) {
 	if ((isset($allow_bbcode) && $allow_bbcode == 1) && !($_POST['bbcode'])) {
 		$message = bbencode($message, $is_html_disabled);
 	}
+	$subject=mysql_real_escape_string($subject);
+	$uid=mysql_real_escape_string($uid);
+	$forum=mysql_real_escape_string($forum);
+	$nom=mysql_real_escape_string($nom);
+	$prenom=mysql_real_escape_string($prenom);
+	$topic_id=mysql_real_escape_string($topic_id);
 	$message = format_message($message);
 	$subject = strip_tags($subject);
 	$poster_ip = $REMOTE_ADDR;
+	$poster_ip=mysql_real_escape_string($poster_ip);
 	$time = date("Y-m-d H:i");
 	$nom = addslashes($nom);
 	$prenom = addslashes($prenom);
@@ -167,6 +174,8 @@ if (isset($submit) && $submit) {
 			$result = db_query($sql, $currentCourseID);
 		}
 	}
+	$post_id=mysql_real_escape_string($post_id);
+	$forum=mysql_real_escape_string($forum);
 	$sql = "UPDATE forums
 		SET forum_posts = forum_posts+1, forum_topics = forum_topics+1, forum_last_post_id = $post_id
 		WHERE forum_id = '$forum'";

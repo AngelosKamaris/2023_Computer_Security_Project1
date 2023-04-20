@@ -291,7 +291,7 @@ function uid_to_am($uid)
 	global $mysqlMainDb;
 
 	if ($r = mysql_fetch_array(db_query("SELECT am from user
-		WHERE user_id = '$uid'", $mysqlMainDb))) {
+		WHERE user_id = '".mysql_real_escape_string($uid)."'", $mysqlMainDb))) {
 	return $r[0];
 		} else {
 			return FALSE;
@@ -306,7 +306,7 @@ function user_group($uid, $required = TRUE)
 {
 	global $currentCourseID;
 
-	$res = db_query("SELECT team FROM user_group WHERE user = '$uid'",
+	$res = db_query("SELECT team FROM user_group WHERE user = '".mysql_real_escape_string($uid)."'",
 	$currentCourseID);
 	if ($res) {
 		$secret = mysql_fetch_row($res);
@@ -338,7 +338,7 @@ function group_secret($gid)
 {
 	global $currentCourseID;
 
-	$res = db_query("SELECT secretDirectory FROM student_group WHERE id = '$gid'",
+	$res = db_query("SELECT secretDirectory FROM student_group WHERE id = '".mysql_real_escape_string($gid)."'",
 	$currentCourseID);
 	if ($res) {
 		$secret = mysql_fetch_row($res);
@@ -413,7 +413,7 @@ function check_admin() {
 	else unset($uid);
 
 	if (isset($uid)) {
-		$res = db_query("SELECT * FROM admin WHERE idUser='$uid'");
+		$res = db_query("SELECT * FROM admin WHERE idUser='".mysql_real_escape_string($uid)."'");
 	}
 	if (!isset($uid) or !$res or mysql_num_rows($res) == 0) {
 		return false;
@@ -428,7 +428,7 @@ function check_admin() {
 function check_guest() {
 	global $mysqlMainDb, $uid;
 	if (isset($uid)) {
-		$res = db_query("SELECT statut FROM user WHERE user_id = '$uid'", $mysqlMainDb);
+		$res = db_query("SELECT statut FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'", $mysqlMainDb);
 		$g = mysql_fetch_row($res);
 
 		if ($g[0] == 10) {
@@ -453,7 +453,7 @@ function check_prof()
                 if (isset($require_current_course) and $is_adminOfCourse) {
                         return true;
                 }
-		$res = db_query("SELECT statut FROM user WHERE user_id='$uid'", $mysqlMainDb);
+		$res = db_query("SELECT statut FROM user WHERE user_id='".mysql_real_escape_string($uid)."'", $mysqlMainDb);
 		$s = mysql_fetch_array($res);
 		if ($s['statut'] == 1)
 		return true;
@@ -580,7 +580,7 @@ function parse_tex($textext)
 // Returns the code of a faculty given its name
 function find_faculty_by_name($name) {
 	$code = mysql_fetch_row(db_query("SELECT code FROM faculte
-		WHERE name = '$name'"));
+		WHERE name = '".mysql_real_escape_string($name)."'"));
 	if (!$code) {
 		return FALSE;
 	} else {
@@ -607,14 +607,14 @@ function find_faculty_by_id($id) {
 // Returns next available code for a new course in faculty with id $fac
 function new_code($fac) {
 	global $mysqlMainDb;
-
+	$fac=mysql_real_escape_string($fac);
 	mysql_select_db($mysqlMainDb);
 	$gencode = mysql_fetch_row(db_query("SELECT code, generator
-		FROM faculte WHERE id = $fac"));
+		FROM faculte WHERE id = '".mysql_real_escape_string($fac)."'"));
 	do {
 		$code = $gencode[0].$gencode[1];
 		$gencode[1] += 1;
-		db_query("UPDATE $mysqlMainDb.faculte SET generator = '$gencode[1]'
+		db_query("UPDATE $mysqlMainDb.faculte SET generator = '".mysql_real_escape_string($gencode[1])."'
 			WHERE id = '$fac'");
 	} while (mysql_select_db($code));
 	mysql_select_db($mysqlMainDb);
@@ -734,6 +734,7 @@ function user_get_data($user_id)
 {
 	global $mysqlMainDb;
 	mysql_select_db($mysqlMainDb);
+	$user_id=mysql_real_escape_string($user_id);
 
     $sql = 'SELECT  `user_id`,
                     `nom` AS `lastname` ,
@@ -808,7 +809,7 @@ function make_clickable_path($dbTable, $path)
 			$out = "<a href='{$base}openDir=/'>$langRoot</a>";
 		} else {
 			$cur .= rawurlencode("/$component");
-			$row = mysql_fetch_array(db_query ("SELECT filename FROM $dbTable
+			$row = mysql_fetch_array(db_query ("SELECT filename FROM ".mysql_real_escape_string($dbTable)."
 					WHERE path LIKE '%$component'"));
 			$dirname = $row['filename'];
 			$out .= " &raquo; <a href='{$base}openDir=$cur'>$dirname</a>";
@@ -892,7 +893,7 @@ function mkpath($path)  {
 function display_activation_link($module_id) {
 
 	global $currentCourseID;
-
+	$module_id=mysql_real_escape_string($module_id);
 	$v = mysql_fetch_array(db_query("SELECT lien FROM accueil
 		WHERE id ='$module_id'", $currentCourseID));
 	$newlien = str_replace("../..","","$v[lien]");
@@ -908,7 +909,7 @@ function display_activation_link($module_id) {
 function visible_module($module_id) {
 
 	global $currentCourseID;
-
+	$module_id=mysql_real_escape_string($module_id);
 	$v = mysql_fetch_array(db_query("SELECT visible FROM accueil
 		WHERE id ='$module_id'", $currentCourseID));
 
@@ -1130,6 +1131,10 @@ function video_url($table, $url, $path)
 // Use $condition as extra SQL to limit the operation
 function move_order($table, $id_field, $id, $order_field, $direction, $condition = '')
 {
+	$id_field=mysql_real_escape_string($id_field);
+	$order_field=mysql_real_escape_string($order_field);
+	$table=mysql_real_escape_string($table);
+	$id=mysql_real_escape_string($id);
         if ($condition) {
                 $condition = ' AND ' . $condition;
         }
@@ -1167,6 +1172,7 @@ function move_order($table, $id_field, $id, $order_field, $direction, $condition
 function add_units_navigation($entry_page = FALSE)
 {
         global $navigation, $cours_id, $is_adminOfCourse, $mysqlMainDb;
+		$cours_id=mysql_real_escape_string($cours_id);
         if ($entry_page and !isset($_GET['unit'])) {
 		unset($_SESSION['unit']);
 		return FALSE;
@@ -1209,6 +1215,7 @@ function ellipsize($string, $maxlen, $postfix = '...')
 function course_code_to_title($code)
 {
         global $mysqlMainDb;
+		$code=mysql_real_escape_string($code);
         $r = db_query("SELECT intitule FROM cours WHERE code='$code'", $mysqlMainDb);
         if ($r and mysql_num_rows($r) > 0) {
                 $row = mysql_fetch_row($r);
@@ -1223,6 +1230,7 @@ function course_code_to_title($code)
 function course_code_to_id($code)
 {
         global $mysqlMainDb;
+		$code=mysql_real_escape_string($code);
         $r = db_query("SELECT cours_id FROM cours WHERE code='$code'", $mysqlMainDb);
         if ($r and mysql_num_rows($r) > 0) {
                 $row = mysql_fetch_row($r);
@@ -1256,6 +1264,7 @@ function csv_escape($string, $force = false)
 // Return the value of a key from the config table, or false if not found
 function get_config($key)
 {
+	$key=mysql_real_escape_string($key);
         $r = db_query("SELECT value FROM config WHERE `key` = '$key'");
         if ($r and mysql_num_rows($r) > 0) {
                 $row = mysql_fetch_row($r);
