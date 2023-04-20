@@ -56,6 +56,7 @@ if ($is_adminOfCourse and isset($_GET['assignment']) and isset($_GET['submission
 // Returns an array of the details of assignment $id
 function get_assignment_details($id)
 {
+  $id=mysql_real_escape_string($id);
 	return mysql_fetch_array(db_query("SELECT * FROM assignments WHERE id = '$id'"));
 }
 
@@ -65,7 +66,7 @@ function get_assignment_details($id)
 function show_edit_form($id, $sid, $assign)
 {
 	global $m, $langGradeOk, $tool_content, $langGradeWork;
-
+  $id=mysql_real_escape_string($id);
 	if ($sub = mysql_fetch_array(db_query("SELECT * FROM assignment_submit WHERE id = '$sid'"))) {
 		
 		$uid_2_name = uid_to_name($sub['uid']);

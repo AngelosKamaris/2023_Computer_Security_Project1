@@ -30,7 +30,7 @@ $nameTools = $langUnregUser;
 $navigation[]= array ("url"=>"../profile/profile.php", "name"=> $langModifProfile);
 
 $tool_content = "";
-
+$uid=mysql_real_escape_string($uid);
 if (!isset($doit) or $doit != "yes") {
 	$tool_content .=  "<table width=99%><tbody>";
 	$tool_content .=  "<tr><td class=\"caution\">";

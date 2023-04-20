@@ -76,7 +76,7 @@ function table_row($title, $content)
 function work_secret($id)
 {
 	global $currentCourseID, $workPath, $tool_content, $coursePath;
-	
+	$id=mysql_real_escape_string($id);
 	$res = db_query("SELECT secret_directory FROM assignments WHERE id = '$id'", $currentCourseID);
 	if ($res) {
 		$secret = mysql_fetch_row($res);
@@ -104,6 +104,7 @@ function work_secret($id)
 function is_group_assignment($id)
 {
 	global $tool_content;
+	$id=mysql_real_escape_string($id);
 	$res = db_query("SELECT group_submissions FROM assignments WHERE id = '$id'");
 	if ($res) {
 		$row = mysql_fetch_row($res);
@@ -124,6 +125,7 @@ function delete_submissions_by_uid($uid, $gid, $id, $new_filename = '')
 {
 	global $m, $tool_content;
 	$return="";
+	$id=mysql_real_escape_string($id);
 	$res = db_query("SELECT * FROM assignment_submit WHERE
 		uid = '$uid' AND assignment_id = '$id'");
 	while ($row = mysql_fetch_array($res)) {
@@ -207,6 +209,7 @@ function group_member_names($gid)
 function find_submission($uid, $id)
 {
 	global $tool_content;
+	$id=mysql_real_escape_string($id);
 	if (is_group_assignment($id)) {
 		$gid = user_group($uid);
 		$res = db_query("SELECT id FROM assignment_submit
@@ -232,7 +235,7 @@ function find_submission($uid, $id)
 function submission_grade($subid)
 {
 	global $m, $tool_content;
-
+	$subid=mysql_real_escape_string($subid);
 	$res = mysql_fetch_row(db_query("SELECT grade, grade_comments
 		FROM assignment_submit WHERE id = '$subid'"));
 	if ($res) {
@@ -258,6 +261,7 @@ function was_graded($uid, $id, $ret_val = FALSE)
 {
 	global $tool_content;
 	$gid = user_group($uid);
+	$id=mysql_real_escape_string($id);
 	$res = db_query("SELECT * FROM assignment_submit
 			WHERE assignment_id = '$id'
 			AND (uid = '$uid' OR group_id = '$gid')");
@@ -281,7 +285,7 @@ function was_graded($uid, $id, $ret_val = FALSE)
 function show_submission_details($id)
 {
 	global $uid, $m, $currentCourseID, $langSubmittedAndGraded, $tool_content;
-
+	$id=mysql_real_escape_string($id);
 	$sub = mysql_fetch_array(
 		db_query("SELECT * FROM assignment_submit
 			WHERE id = '$id'"));
@@ -333,6 +337,7 @@ function show_submission_details($id)
 function was_submitted($uid, $gid, $id)
 {
 	global $tool_content;
+	$id=mysql_real_escape_string($id);
 	if (mysql_num_rows(db_query(
 		"SELECT id FROM assignment_submit WHERE assignment_id = '$id'
 			AND uid = '$uid'"))) {

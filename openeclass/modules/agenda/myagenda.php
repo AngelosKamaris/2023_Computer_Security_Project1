@@ -49,6 +49,7 @@ $TABLECOURSUSER = "`$mysqlMainDb`.cours_user";
 
 if (isset($uid))
 {
+	$uid=mysql_real_escape_string($uid);
  	$query = db_query("SELECT cours.code k, cours.fake_code fc,
 		cours.intitule i, cours.titulaires t
 	                        FROM cours, cours_user
@@ -84,10 +85,12 @@ $langToday);
 function get_agendaitems($query, $month, $year) {
 	global $urlServer;
 	$items = array();
-
+	$month=mysql_real_escape_string($month);
+	$year=mysql_real_escape_string($year);
 	// get agenda-items for every course
 	while ($mycours = mysql_fetch_array($query))
 	{
+		
 	$result = db_query("SELECT * FROM agenda WHERE month(day)='$month' AND year(day)='$year'","$mycours[k]");
 
 	    while ($item = mysql_fetch_array($result))

@@ -206,7 +206,8 @@ function submit_work($uid, $id, $file) {
 		$langBack, $m, $currentCourseID, $tool_content, $workPath;
 
 	$group = user_group($uid);
-
+	$file=mysql_real_escape_string($file);
+	$id=mysql_real_escape_string($id);
         $ext = get_file_extension($file);
 	$local_name = greek_to_latin('Group '. $group . (empty($ext)? '': '.' . $ext));
 
