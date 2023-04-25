@@ -95,6 +95,10 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 	global $langExtrasLeft, $langExtrasRight;
 	global $require_current_course, $is_adminOfCourse;
 
+	
+
+
+
 	//get blocks content from $toolContent array
 	if ($perso_tool_content) {
 		$lesson_content = $perso_tool_content ['lessons_content'];
