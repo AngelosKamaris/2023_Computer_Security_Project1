@@ -93,6 +93,7 @@ if (isset($_GET['delete'])) {
                 $displayAnnouncementList = true;
         }
 } elseif (isset($_POST['submitAnnouncement'])) {
+        checkToken();
 	// submit announcement command
         if (isset($_POST['id'])) {
                 // modify announcement
@@ -143,6 +144,7 @@ if ($displayForm && (@$addAnnouce==1 || isset($modify))) {
         if (!isset($commentToModifyEn))	$commentToModifyEn ="";
 
         $checked = (isset($visibleToModify) and $visibleToModify == 'V')? " checked='1'": '';
+        $token=makeToken();
         $tool_content .= "
                 <tr><th class='left'>$langAdminAnVis</th>
                     <td><input type='checkbox' value='1' name='visible'$checked /></td></tr>
@@ -170,6 +172,7 @@ if ($displayForm && (@$addAnnouce==1 || isset($modify))) {
                        </td></tr>
               <tr><th class='left'>&nbsp;</th>
                   <td><input type='submit' name='submitAnnouncement' value='$langSubmit' /></td></tr>
+                  <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
               <tr><td colspan='2'>&nbsp;</td></tr>
           </tbody>
        </table>

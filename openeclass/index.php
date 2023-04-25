@@ -1,4 +1,15 @@
-<?php session_start();
+<?php
+$cookieParams = session_get_cookie_params();
+$cookieParams['httponly'] = true; 
+session_set_cookie_params(
+    $cookieParams['lifetime'],
+    $cookieParams['path'],
+    $cookieParams['domain'],
+    $cookieParams['secure'],
+    $cookieParams['httponly']
+);
+session_start();
+echo "here<br>";
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System

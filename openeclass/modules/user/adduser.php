@@ -41,6 +41,7 @@ $tool_content="";
 if($is_adminOfCourse) {
 
 if (isset($add)) {
+	checkToken();
 	mysql_select_db($mysqlMainDb);
 	$result = db_query("INSERT INTO cours_user (user_id, cours_id, statut, reg_date) ".
 		"VALUES ('".mysql_escape_string($add)."', $cours_id, ".
@@ -55,7 +56,6 @@ if (isset($add)) {
 		$tool_content .= "<br /><a href=\"adduser.php\">$langAddBack</a></p><br />\n";
 
 } else {
-
 	$tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]'>";
 
 if(!isset($search_nom)) $search_nom = "";
@@ -129,6 +129,7 @@ tCont;
     </tr>
 tCont3;
 			$i = 1;
+			$token=makeToken();
 			while ($myrow = mysql_fetch_array($result)) {
 				if ($i % 2 == 0) {
 					$tool_content .= "<tr>";
@@ -138,7 +139,7 @@ tCont3;
 				$tool_content .= "<td align=\"right\">$i.</td><td>$myrow[prenom]</td>
       				<td>$myrow[nom]</td><td>$myrow[username]</td>
       				<td align=\"center\">
-				<a href=\"$_SERVER[PHP_SELF]?add=$myrow[user_id]\">$langRegister</a></td></tr>\n";
+				<a href=\"$_SERVER[PHP_SELF]?add=$myrow[user_id]&csrf_token=$token\">$langRegister</a></td></tr>\n";
 				$i++;
 			}
 			$tool_content .= "</tbody>";

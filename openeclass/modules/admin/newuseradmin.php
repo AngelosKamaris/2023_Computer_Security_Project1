@@ -50,6 +50,7 @@ $all_set = register_posted_variables(array(
 $submit = isset($_POST['submit'])?$_POST['submit']:'';
 
 if($submit) {
+	checkToken();
 	// register user
 	$depid = intval(isset($_POST['department'])?$_POST['department']: 0);
 	$proflanguage = isset($_POST['language'])?$_POST['language']:'';
@@ -125,6 +126,7 @@ $langEmail : $emailhelpdesk
 } else {
         $lang = false;
 	if (isset($id)) { // if we come from prof request
+		checkToken();
 		$res = mysql_fetch_array(db_query("SELECT profname, profsurname, profuname, profemail, proftmima, comment, lang, statut 
 			FROM prof_request WHERE rid='$id'"));
 		$ps = $res['profsurname'];
@@ -148,7 +150,7 @@ $langEmail : $emailhelpdesk
                 $nameTools = $langProfReg;
                 $title = $langNewProf;
         }
-
+		$token=makeToken();
 	$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
 	<table width='99%' align='left' class='FormData'>
 	<tbody><tr>
@@ -174,6 +176,7 @@ $langEmail : $emailhelpdesk
 	<tr>
 	<th class='left'><b>$langEmail</b></th>
 	<td><input class='FormData_InputText' type='text' name='email_form' value='".@$pe."'>&nbsp;(*)</b></td>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	</tr>
 	<tr>
 	<th class='left'>$langFaculty</th>

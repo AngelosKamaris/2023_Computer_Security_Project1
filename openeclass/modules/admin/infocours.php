@@ -76,6 +76,7 @@ if (isset($search) && ($search=="yes")) {
 }
 // Update cours basic information
 if (isset($submit))  {
+  checkToken();
   // Get faculte ID and faculte name for $faculte
   // $faculte example: 12--Tmima 1
   list($facid, $facname) = explode("--", $faculte);
@@ -94,6 +95,7 @@ if (isset($submit))  {
 }
 // Display edit form for course basic information
 else {
+  $token=makeToken();
 	// Get course information
 	$row = mysql_fetch_array(mysql_query("SELECT * FROM cours WHERE code='".mysql_real_escape_string($_GET['c'])."'"));
 	// Constract the edit form
@@ -136,6 +138,7 @@ else {
   <tr>
     <th>&nbsp;</th>
     <td><input type='submit' name='submit' value='$langModify'></td>
+    <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
   </tr>
   </tbody>
   </table>

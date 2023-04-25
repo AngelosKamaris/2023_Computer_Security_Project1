@@ -221,7 +221,7 @@ tCont2;
 		$tool_content .= '
            <option value="0">'.$dropbox_lang["justUploadInSelect"].'</option>';
 	}
-
+	$token = makeToken();
 	$tool_content .= "
         </select>
       </td>
@@ -229,6 +229,7 @@ tCont2;
     <tr>
       <th>&nbsp;</th>
       <td><input type='Submit' name='submitWork' value='".$dropbox_lang["ok"]."' /></td>
+	  <input type='hidden' name='csrf_token' value='$token'/>
     </tr>
     </tbody>
     </table>

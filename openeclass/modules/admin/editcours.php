@@ -235,9 +235,10 @@ if (isset($c)) {
     <td><a href=\"addusertocours.php?c=".htmlspecialchars($c)."".$searchurl."\">".$langAdminUsers."</a></td>
   </tr>";
   // Backup course
+  $token=makeToken();
 	$tool_content .= "
   <tr>
-    <td><a href=\"../course_info/archive_course.php?c=".htmlspecialchars($c)."".$searchurl."\">".$langTakeBackup."<a/></td>
+    <td><a href=\"../course_info/archive_course.php?c=".htmlspecialchars($c)."".$searchurl."&csrf_token=$token\">".$langTakeBackup."<a/></td>
   </tr>";
   // Delete course
 	$tool_content .= "

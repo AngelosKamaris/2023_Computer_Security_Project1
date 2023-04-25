@@ -46,6 +46,7 @@ if ($is_adminOfCourse and isset($currentCourseID)) {
 		db_query("UPDATE accueil SET visible = 1 WHERE id='$eclass_module_id'", $currentCourseID);
 	}
 }
+include 'csrf_func.php';
 //template path for logged out + logged in (ex., when session expires)
 $extraMessage = ""; //initialise var for security
 if (isset($errorMessagePath)) {

@@ -58,6 +58,7 @@ if (isset($_POST['selectCourse']) and is_array($_POST['selectCourse'])) {
 }
 
 if (isset($_POST["submit"])) {
+        checkToken();
         foreach ($changeCourse as $key => $value) {
                 $cid = intval($value);
                 if (!in_array($cid, $selectCourse)) {
@@ -138,6 +139,7 @@ if (isset($_POST["submit"])) {
 		}
 		$tool_content .= "<br /><br />\n";
 	} else {
+                $token=makeToken();
 		// department exists
 		$numofcourses = getdepnumcourses($fc);
 		// display all the facultes collapsed
@@ -151,6 +153,7 @@ if (isset($_POST["submit"])) {
     <tbody>
     <tr>
       <td><input class='Login' type='submit' name='submit' value='$langRegistration' /></td>
+      <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
     </tr>
     </tbody>
     </table>

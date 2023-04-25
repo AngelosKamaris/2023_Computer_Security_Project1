@@ -56,7 +56,7 @@ if (!email_seems_valid($usermail)) {
 }
 
 if (isset($_POST['submit']) and !$all_set) {
-
+    checkToken();
         // form submitted but required fields empty
         $tool_content .= "<table width='99%'><tbody><tr>
                 <td class='caution' height='60'><p>$langFieldsMissing</p></td>
@@ -106,7 +106,7 @@ if ($all_set) {
 
 } else {
         // display the form
-
+        $token=makeToken();
         $tool_content .= "
 <p>$langInfoStudReq</p><br />
 <form action='$_SERVER[PHP_SELF]' method='post'>
@@ -169,6 +169,7 @@ if ($all_set) {
   <tr>
     <th class='left'>&nbsp;</th>
     <td><input type='submit' class='ButtonSubmit' name='submit' value='$langSubmitNew' /></td>
+    <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
   </tr>
   </table>
      <div align='right'><small>$langRequiredFields</small></div>

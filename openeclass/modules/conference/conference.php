@@ -30,6 +30,7 @@ $helpTopic = 'Conference';
 $tool_content = "";
 include '../../include/baseTheme.php';
 
+
 if(!isset($MCU))
 	$MCU="";
 
@@ -87,6 +88,9 @@ if ($is_adminOfCourse) {
       </div>";
 }
 
+$token=makeToken();
+echo ($token);
+
 $tool_content .= "
 <form name='chatForm' action='messageList.php' method='get' target='messageList' onSubmit='return prepare_message();'>
   <table width='99%' class='FormData'>
@@ -98,6 +102,7 @@ $tool_content .= "
       <b>$langTypeMessage</b><br />
       <input type='text' name='msg' size='80'style='border: 1px solid #CAC3B5; background: #fbfbfb;'>
       <input type='hidden' name='chatLine'>
+      <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
       <input type='submit' value=' >> '>
 
     </td>

@@ -102,6 +102,7 @@ if (!does_exists($forum, $currentCourseID, "forum")) {
 }
 
 if (isset($submit) && $submit) {
+	checkToken();
 	$subject = strip_tags($subject);
 	if (trim($message) == '' || trim($subject) == '') {
 		$tool_content .= $langEmptyMsg;
@@ -223,6 +224,7 @@ if (isset($submit) && $submit) {
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit();
 	}
+	$token=makeToken();
 	$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
 	<table class='FormData' width='99%'>
 	<tbody>
@@ -248,6 +250,7 @@ if (isset($submit) && $submit) {
 	<td><input type='hidden' name='forum' value='$forum' />
 	<input type='submit' name='submit' value='$langSubmit' />&nbsp;
 	<input type='submit' name='cancel' value='$langCancelPost' />
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	</td></tr>
 	</tbody>
 	</table>

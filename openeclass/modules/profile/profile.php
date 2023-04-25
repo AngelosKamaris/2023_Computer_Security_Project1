@@ -32,6 +32,10 @@ include "../auth/auth.inc.php";
 $require_valid_uid = TRUE;
 $tool_content = "";
 
+if(isset($submit)){
+	checkToken();
+}
+
 check_uid();
 $nameTools = $langModifProfile;
 check_guest();
@@ -45,10 +49,13 @@ if ($mysqli->connect_errno) {
 mysqli_query($mysqli,"SET NAMES utf8");
 var_dump($mysqli);
 
+
+
 if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
         if (!$allow_username_change) {
                 $username_form = $uname;
         }
+
 	// check if username exists
 	// $username_check=mysql_query("SELECT username FROM user WHERE username='".escapeSimple($username_form)."'");
 	// while ($myusername = mysql_fetch_array($username_check))
@@ -98,6 +105,7 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 		exit();
 	}
 
+	
 	// everything is ok
 	else {
 		##[BEGIN personalisation modification]############
@@ -328,6 +336,10 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
     </tr>";
 	}
 	##[END personalisation modification]############
+	echo "<br>here<br>";
+	$token = makeToken();
+	echo "<br>here<br>";
+	echo $token;
 	$tool_content .= "
     <tr>
       <th class='left'>$langLanguage</th>
@@ -338,6 +350,7 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
 	<tr>
       <th>&nbsp;</th>
       <td><input type=\"Submit\" name=\"submit\" value=\"$langModify\"></td>
+	  <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
     </tr>
     </tbody>
     </table>

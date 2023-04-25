@@ -43,8 +43,10 @@ if (extension_loaded("zlib")) {
 	include("../../include/pclzip/pclzip.lib.php");
 }
 
+
 // check if you are admin
 if($is_adminOfCourse) {
+	checkToken();
 	$dateBackuping  = date("Y-m-d-H-i-(B)-s");
 	$shortDateBackuping  = date("YzBs"); // YEAR - Day in Year - Swatch - second
 	$archiveDir .= "/".$currentCourseID."/".$dateBackuping;

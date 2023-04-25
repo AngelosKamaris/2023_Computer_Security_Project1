@@ -31,7 +31,9 @@ $navigation[]= array ("url"=>"../profile/profile.php", "name"=> $langModifProfil
 
 $tool_content = "";
 $uid=mysql_real_escape_string($uid);
+
 if (!isset($doit) or $doit != "yes") {
+	
 	$tool_content .=  "<table width=99%><tbody>";
 	$tool_content .=  "<tr><td class=\"caution\">";
 
@@ -45,10 +47,11 @@ if (!isset($doit) or $doit != "yes") {
 	} else {
 		$q = db_query ("SELECT code FROM cours, cours_user WHERE cours.cours_id = cours_user.cours_id AND user_id = '$uid' LIMIT 1") ;
 		if (mysql_num_rows($q) == 0) {
+			$token=makeToken();
 			$tool_content .=  "<p><b>$langConfirm</b></p>";
 			$tool_content .=  "<ul class=\"listBullet\">";
 			$tool_content .=  "<li>$langYes: ";
-			$tool_content .=  "<a href='$_SERVER[PHP_SELF]?u=$uid&doit=yes'>$langDelete</a>";
+			$tool_content .=  "<a href='$_SERVER[PHP_SELF]?u=$uid&doit=yes&csrf_token=$token'>$langDelete</a>";
 			$tool_content .=  "</li>";
 			$tool_content .=  "<li>$langNo: <a href='../profile/profile.php'>$langBack</a>";
 			$tool_content .=  "</li></ul>";
@@ -61,6 +64,7 @@ if (!isset($doit) or $doit != "yes") {
 		}
 	}  //endif is admin
 } else {
+	checkToken();
 	if (isset($uid)) {
 		$tool_content .=  "<table width=99%><tbody>";
 		$tool_content .=  "<tr>";

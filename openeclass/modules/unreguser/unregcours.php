@@ -39,7 +39,7 @@ if(!isset($_GET['cid']))
   $cid=$_SESSION['cid_tmp'];
 
 if (!isset($doit) or $doit != "yes") {
-
+        $token=makeToken();
   $tool_content .= "
     <table width='40%'>
     <tbody>
@@ -48,7 +48,7 @@ if (!isset($doit) or $doit != "yes") {
       	<p>$langConfirmUnregCours:</p><p> <em>".course_code_to_title($cid)."</em>&nbsp;? </p>
 	<ul class='listBullet'>
 	<li>$langYes: 
-	<a href='$_SERVER[PHP_SELF]?u=$uid&amp;cid=$cid&amp;doit=yes' class=mainpage>$langUnregCours</a>
+	<a href='$_SERVER[PHP_SELF]?u=$uid&amp;cid=$cid&amp;doit=yes&csrf_token=$token' class=mainpage>$langUnregCours</a>
 	</li>
 	<li>$langNo: <a href='../../index.php' class=mainpage>$langBack</a>
 	</li></ul>
@@ -58,6 +58,7 @@ if (!isset($doit) or $doit != "yes") {
     </table>";
 
 } else {
+        checkToken();
 if (isset($uid) and $uid==$_SESSION['uid']) {
             db_query("DELETE from cours_user WHERE cours_id = (SELECT cours_id FROM cours WHERE code = " . quote($cid) . ") AND user_id='$uid'");
                 if (mysql_affected_rows() > 0) {

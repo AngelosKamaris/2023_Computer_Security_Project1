@@ -49,6 +49,7 @@ $tool_content = "";
 $submit = isset($_POST['submit'])?$_POST['submit']:'';
 // professor registration
 if ($submit)  {
+		checkToken();
         $auth = $_POST['auth'];
         $pn = $_POST['pn'];
         $ps = $_POST['ps'];
@@ -139,7 +140,7 @@ if ($submit)  {
 		$pcom = $res['comment'];
 		$lang = $res['lang'];
 	}
-
+	$token=makeToken();
 	$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
 	<table width='99%' class='FormData'>
 	<tbody>
@@ -184,6 +185,7 @@ if ($submit)  {
 	$tool_content .= "</td></tr>
 	<tr><th>&nbsp;</th>
 	<td><input type='submit' name='submit' value='".$langSubmit."' >
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	<input type='hidden' name='auth' value='$auth' >
 	</td></tr>
 	<input type='hidden' name='rid' value='".@$id."'>

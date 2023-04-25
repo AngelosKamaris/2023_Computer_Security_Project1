@@ -129,6 +129,7 @@ hCont;
 if ($is_adminOfCourse){
 	global $dbname;
 	if  (isset($_REQUEST['toolStatus']) ){
+		checkToken();
 		if(isset($_POST['toolStatActive'])) $tool_stat_active = $_POST['toolStatActive'];
 
 		
@@ -240,6 +241,7 @@ if ($is_adminOfCourse){
 	//--add external link
 
 	if(isset($submit) &&  @$action == 2) {
+		checkToken();
 		if (($link == "http://") or ($link == "ftp://") or empty($link) or empty($name_link))  {
 			$tool_content .= "<p class=\"caution_small\">$langInvalidLink<br /><a href=\"$_SERVER[PHP_SELF]?action=2\">$langHome</a></p><br />";
 			draw($tool_content, 2, 'course_tools');
@@ -274,6 +276,7 @@ if ($is_adminOfCourse){
 // -------------------------
 
 	if(isset($submit) &&  @$action == 1){
+		checkToken();
 		$updir = "$webDir/courses/$currentCourseID/page/"; //path to upload directory
 		$size = "20971520"; //file size is 20M (1024x1024x20)
 		if (isset($file_name) and ($file_name != "") && ($file_size <= "$size") and ($link_name != "")) {
@@ -318,7 +321,7 @@ if ($is_adminOfCourse && @$action == 1) {//upload html file
 	$nameTools = $langUploadPage;
 	$navigation[]= array ("url"=>"course_tools.php", "name"=> $langToolManagement);
 	$helpTopic = 'Import';
-
+	$token=makeToken();
 	$tool_content .= "<form method=\"POST\" action=\"$_SERVER[PHP_SELF]?submit=yes&action=1\" enctype=\"multipart/form-data\">
 	<p>$langExplanation_0</p>
 	<p>$langExplanation_3</p>
@@ -343,6 +346,7 @@ if ($is_adminOfCourse && @$action == 1) {//upload html file
 	<tr>
 	<th class='left'>&nbsp;</th>
 	<td><input type=\"Submit\" name=\"submit\" value=\"$langAdd\"></td>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	<td>&nbsp;</td>
 	</tr>
 	</tbody>
@@ -357,7 +361,7 @@ if ($is_adminOfCourse && @$action == 2) {//add external link
 	$nameTools = $langAddExtLink;
 	$navigation[]= array ("url"=>"course_tools.php", "name"=> $langToolManagement);
 	$helpTopic = 'Module';
-
+	$token=makeToken();
 	$tool_content .=  "<form method=\"post\" action=\"$_SERVER[PHP_SELF]?submit=yes&action=2\">
 	<br>
 	<table width=\"99%\" align='left' class='FormData'>
@@ -380,6 +384,7 @@ if ($is_adminOfCourse && @$action == 2) {//add external link
 	<tr>
 	<th class='left'>&nbsp;</th>
 	<td><input type=\"Submit\" name=\"submit\" value=\"$langAdd\"></td>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	<td>&nbsp;</td>
 	</tr>
 	</thead>
@@ -435,7 +440,7 @@ if ($is_adminOfCourse) {
 	    <li><a href=\"".$_SERVER['PHP_SELF']."?action=2\">".$langAddExtLink."</a></li>
 	  </ul>
 	</div>";
-
+	$token=makeToken();
 	$tool_content .= <<<tForm
 <form name="courseTools" action="$_SERVER[PHP_SELF]" method="post" enctype="multipart/form-data">
   <br/>
@@ -465,6 +470,7 @@ if ($is_adminOfCourse) {
     <td>&nbsp;</td>
     <td><div align="center">
         <input type=submit value="$langSubmitChanges"  name="toolStatus" onClick="selectAll(this.form.elements[3],true)">
+		<input type="hidden" name="csrf_token" value="$token"/>
         </div>
         </td>
     <td>&nbsp;</td>

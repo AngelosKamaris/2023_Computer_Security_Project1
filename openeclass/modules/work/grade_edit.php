@@ -75,6 +75,7 @@ function show_edit_form($id, $sid, $assign)
 						"<a href='../group/group_space.php?userGroupId=$sub[group_id]'>".
 						"$m[ofgroup] $sub[group_id]</a>)";
 			} else $group_submission = "";
+    
 		$tool_content .= <<<cData
 
     <form method="post" action="work.php">
@@ -98,7 +99,7 @@ function show_edit_form($id, $sid, $assign)
       <td><a href='work.php?get=${sub['id']}'>${sub['file_name']}</a></td>
     </tr>
 cData;
-
+  $token=makeToken();
 	$tool_content .= <<<cData
 
     <tr>
@@ -112,6 +113,7 @@ cData;
     <tr>
       <th class="left">&nbsp;</th>
       <td><input type="submit" name="grade_comments" value="${langGradeOk}"></td>
+      <input type="hidden" name="csrf_token" value="$token"/>
     </tr>
     </tbody>
     </table>

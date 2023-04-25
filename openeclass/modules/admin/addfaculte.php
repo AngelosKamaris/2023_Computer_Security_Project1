@@ -68,6 +68,7 @@ if (isset($a)) {
 			$nameTools = $langFaculteAdd;
 			break;
 		case 2:
+			checkToken();
 			$navigation[] = array("url" => "$_SERVER[PHP_SELF]", "name" => $langListFaculteActions);
 			$nameTools = $langFaculteDel;
 			break;
@@ -111,6 +112,7 @@ if (!isset($a)) {
 	</tr>";
 	$sql=mysql_query("SELECT code,name,id FROM faculte");
 	$k = 0;
+	$token=makeToken();
 	// For all faculties display some info
 	for ($j = 0; $j < mysql_num_rows($sql); $j++) {
 		$logs = mysql_fetch_array($sql);
@@ -123,9 +125,9 @@ if (!isset($a)) {
 		<img style='border:0px; padding-top:3px;' src='${urlServer}/template/classic/img/arrow_grey.gif' title='bullet'></td>";
 		$tool_content .= "\n    <td>".htmlspecialchars($logs[1])."</td>";
 		$tool_content .= "\n    <td align='center'>".htmlspecialchars($logs[0])."</td>";
-		// Give administrator a link to delete or edit a faculty
+		// Give administrator a link to delete or edit a faculty	
 		$tool_content .= "\n    <td width='15%' align='center' nowrap>
-		<a href='$_SERVER[PHP_SELF]?a=2&c=".$logs['id']."'>
+		<a href='$_SERVER[PHP_SELF]?a=2&c=".$logs['id']."&csrf_token=$token'>
 		<img src='../../images/delete.gif' border='0' title='$langDelete'></img></a>&nbsp;&nbsp;
 		<a href='$_SERVER[PHP_SELF]?a=3&c=".$logs['id']."'>
 		<img src='../../template/classic/img/edit.gif' border='0' title='$langEdit'></img></a></td>
@@ -139,6 +141,7 @@ if (!isset($a)) {
 // Add a new faculte
 elseif ($a == 1)  {
 	if (isset($add)) {
+		checkToken();
 		// Check for empty fields
 		if (empty($codefaculte) or empty($faculte)) {
 			$tool_content .= "<p>".$langEmptyFaculte."</p><br />";
@@ -166,6 +169,7 @@ elseif ($a == 1)  {
 			$tool_content .= "<p>".$langAddSuccess."</p><br />";
 			}
 	} else {
+		$token=makeToken();
 		// Display form for new faculte information
 		$tool_content .= "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."?a=1\">";
 		$tool_content .= "<table width='99%' class='FormData'>
@@ -183,6 +187,7 @@ elseif ($a == 1)  {
 		<tr>
 		<th>&nbsp;</th>
 		<td><input type='submit' name='add' value='".$langAdd."' /></td>
+		<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 		</tr>
 		</tbody>
 		</table>
@@ -210,6 +215,7 @@ elseif ($a == 2) {
 elseif ($a == 3)  {
         $c = @intval($_REQUEST['c']);
 	if (isset($_POST['edit'])) {
+		checkToken();
 		// Check for empty fields
                 $faculte = $_POST['faculte'];
 		if (empty($faculte)) {
@@ -236,6 +242,7 @@ elseif ($a == 3)  {
 			$tool_content .= "<p>$langEditFacSucces</p><br>";
 			}
 	} else {
+		$token=makeToken();
 		// Get faculte information
                 $c = intval($_GET['c']);
 		$sql = "SELECT code, name FROM faculte WHERE id=$c";
@@ -261,6 +268,7 @@ elseif ($a == 3)  {
 		<th>&nbsp;</th>
 		<td><input type='hidden' name='c' value='$c' />
 		<input type='submit' name='edit' value='$langAcceptChanges' />
+		<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 		</td>
 		</tr>
 		</tbody>

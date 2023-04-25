@@ -50,6 +50,7 @@ if (isset($search) && ($search=="yes")) {
 }
 // Register - Unregister students - professors to course
 if (isset($_POST['submit']))  {
+	checkToken();
         $regstuds = isset($_POST['regstuds'])? array_map('intval', $_POST['regstuds']): array();
         $regprofs = isset($_POST['regprofs'])? array_map('intval', $_POST['regprofs']): array();
         $reglist = implode(', ', array_merge($regstuds, $regprofs));
@@ -137,7 +138,7 @@ function reverseAll(cbList) {
 }
 
 </script>';
-
+	$token=makeToken();
 	$tool_content .= "<form action=".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method='post'>";
 	$tool_content .= "<table class='FormData' width='99%' align='left'><tbody>
                           <tr><th colspan='3'>".$langFormUserManage."</th></tr>
@@ -215,6 +216,7 @@ function reverseAll(cbList) {
 	}
 	$tool_content .= "</select></th></tr><tr><td>&nbsp;</td>
 		<td><input type=submit value=\"".$langAcceptChanges."\" name=\"submit\" onClick=\"selectAll(this.form.elements[5],this.form.elements[6],true)\"></td>
+		<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 		<td>&nbsp;</td>
 		</tr></tbody></table>";
 	$tool_content .= "</form>";

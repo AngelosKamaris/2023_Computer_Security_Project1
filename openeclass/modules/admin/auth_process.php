@@ -66,6 +66,7 @@ $test_username = isset($_POST['test_username'])?$_POST['test_username']:'';
 $test_password = isset($_POST['test_password'])?$_POST['test_password']:'';
 
 if((!empty($auth_submit)) && ($auth_submit==1)) {
+	checkToken();
 	$submit = isset($_POST['submit'])?$_POST['submit']:'';
 	// if form is submitted
 	if((array_key_exists('submit', $_POST)) && (!empty($submit))) {
@@ -163,6 +164,7 @@ else
 	if(isset($auth) and $auth != 6) {
 		$auth_data = get_auth_settings($auth);
 	}
+	$token=makeToken();
 	$tool_content .= " <table width='99%' class='FormData' align='left'><tbody><tr>
 	<th width='220'>
 	<form name=\"authmenu\" method=\"post\" action=\"auth_process.php\">
@@ -196,6 +198,7 @@ else
 		<tr><th class='left'>$langPass: </th>
 		<td><input size='30' class='FormData_InputText' type='password' name='test_password' value='".$test_password."'></td></tr>";
 	}
+	$tool_content .= "<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>";
 	$tool_content .= "<tr><th>&nbsp;</th><td><input type='submit' name='submit' value='$langModify'></form></td></tr>";
 	$tool_content .="<br /></table>";
 }

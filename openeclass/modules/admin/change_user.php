@@ -39,6 +39,7 @@ $navigation[] = array("url" => "index.php", "name" => $langAdmin);
 $tool_content = '';
 
 if (isset($_POST['username'])) {
+        checkToken();
 	$result = db_query("SELECT user_id, nom, username, password, prenom, statut, email, iduser is_admin, perso, lang
                 FROM user LEFT JOIN admin
                 ON user.user_id = admin.iduser
@@ -74,6 +75,6 @@ if (isset($_POST['username'])) {
                 $tool_content = "<div class='caution_small'>" . sprintf($langChangeUserNotFound, $_POST['username']) . "</div>";
         }
 } 
-
-$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>$langUsername: <input type='text' name='username' /></form>";
+$token=makeToken();
+$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>$langUsername: <input type='text' name='username' /><input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/></form>";
 draw($tool_content,3,'admin');

@@ -55,6 +55,7 @@ if (isset($send_archive) and $_FILES['archiveZipped']['size'] > 0) {
 	$tool_content .= "<tr><td>".unpack_zip_show_files($archiveZipped)."</td></tr>";
 	$tool_content .= "<tbody></table><br />";
 } elseif (isset($_POST['send_path']) and isset($_POST['pathToArchive'])) {
+		checkToken();
         $pathToArchive = $_POST['pathToArchive'];
 	if (file_exists($pathToArchive)) {
 		$tool_content .= "<table width='99%'><caption>".$langFileUnzipping."</caption><tbody>";
@@ -98,6 +99,7 @@ if (isset($send_archive) and $_FILES['archiveZipped']['size'] > 0) {
 }
 
 elseif (isset($_POST['pathOf4path'])) {
+	checkToken();
 	// we know where is the 4 paths to restore  the  course.
 	// 2 Show content
 	// $_POST['restoreThis']: contains the path of the archived course
@@ -114,6 +116,7 @@ elseif (isset($_POST['pathOf4path'])) {
 // -------------------------------------
 // Displaying Form
 // -------------------------------------
+	$token=makeToken();
 	$tool_content .= "<table width='99%' class='FormData'>
 	<tbody><tr><th>&nbsp;</th><td><b>$langFirstMethod</b></td></tr>
 	<tr><th>&nbsp;</th><td>$langRequest1
@@ -121,6 +124,7 @@ elseif (isset($_POST['pathOf4path'])) {
 	<form action='".$_SERVER['PHP_SELF']."' method='post' name='sendZip' enctype='multipart/form-data'>
 	<input type='file' name='archiveZipped' />
 	<input type='submit' name='send_archive' value='".$langSend."' />
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	</form>
 	</td>
 	</tr>
@@ -135,6 +139,7 @@ elseif (isset($_POST['pathOf4path'])) {
 	<form action='".$_SERVER['PHP_SELF']."' method='post'>
 	<input type='text' name='pathToArchive' />
 	<input type='submit' name='send_path' value='".$langSend."' />
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	</form>
 	</td></tr>
 	</tbody></table><br />";
@@ -181,6 +186,7 @@ function course_details($code, $lang, $title, $desc, $fac, $vis, $prof, $type) {
 
         // display the restoring form
 	if (!$action) {
+		$token=makeToken();
 		echo "<form action='$_SERVER[PHP_SELF]' method='post'>";
   		echo "<table width='99%' class='FormData'><tbody>";
 		echo "<tr><td align='justify' colspan='2'>$langInfo1</td></tr>";
@@ -201,6 +207,7 @@ function course_details($code, $lang, $title, $desc, $fac, $vis, $prof, $type) {
 		echo "<tr><td>&nbsp;</td></tr><tr><td>";
 		echo "<input type='submit' name='create_dir_for_course' value='$langOk' />";
 		echo "<input type='hidden' name='restoreThis' value='$restoreThis' />";
+		echo "<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>";
 		echo "</td></tr></tbody></table></form>";
 	}
 }
@@ -541,7 +548,7 @@ function unpack_zip_show_files($zipfile)
 	if($dirnameCourse[strlen($dirnameCourse)-1] != '/')
 		$dirnameCourse .= '/';
 	$handle = opendir($dirnameCourse);
-
+	$token=makeToken();
 	while ($entries = readdir($handle)) {
 		if ($entries == '.' or $entries == '..' or $entries == 'CVS')
 			continue;
@@ -562,7 +569,7 @@ function unpack_zip_show_files($zipfile)
 				</li>";
 			}
 		closedir($handle2);
-		$retString .= "</ol><br /><input type='submit' value='$langRestore' name='pathOf4path' /></form></li>";
+		$retString .= "</ol><br /><input type='submit' value='$langRestore' name='pathOf4path' /><input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/></form></li>";
 	}
 	closedir($handle);
 	$retString .= "</ol>\n";
