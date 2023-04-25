@@ -59,9 +59,10 @@ $tool_content = "";
 
 // first check
 // check if we can connect to database. If not then eclass is most likely not installed
-// if (isset($mysqlServer) and isset($mysqlUser) and isset($mysqlPassword)) {
+if (isset($mysqlServer) and isset($mysqlUser) and isset($mysqlPassword)) {
 	$db = mysql_connect($mysqlServer, $mysqlUser, $mysqlPassword);
 	if (mysql_version()) mysql_query("SET NAMES utf8");
+}
 if (!$db) {
 	include "include/not_installed.php";
 }

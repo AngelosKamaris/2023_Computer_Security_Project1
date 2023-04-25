@@ -23,5 +23,4 @@ function checkToken() {
   // else{
   //   die('all good');
   //   }
-  return true;
 }

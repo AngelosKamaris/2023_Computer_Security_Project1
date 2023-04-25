@@ -70,8 +70,9 @@ function checkrequired(which, entry, entry2) {
 hContent;
 
 $titulaire_probable="$prenom $nom";
-
+$token=makeToken();
 $tool_content .= "<form method='post' name='createform' action='$_SERVER[PHP_SELF]' onsubmit=\"return checkrequired(this, 'intitule', 'titulaires');\">";
+$tool_content .="<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>";
 
 // Import from BetaCMS Bridge
 doImportFromBetaCMSBeforeCourseCreation();
@@ -112,7 +113,6 @@ $tool_content .= $intitule_html .
                  $visit_html;
 
 if (isset($_POST['back1']) or !isset($_POST['visit'])) {
-
    // display form
 	$tool_content .= "<table width=\"99%\" align='left' class='FormData'>
 	<tbody>
@@ -165,6 +165,7 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 // --------------------------------
 
  elseif (isset($_POST['create2']) or isset($_POST['back2']))  {
+	checkToken();
 	$nameTools = $langCreateCourse . " (" . $langCreateCourseStep." 2 " .$langCreateCourseStep2 . " 3 )";
 	$tool_content .= "<table width=\"99%\" align='left' class='FormData'>
 	<tbody>
@@ -193,12 +194,14 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 	<tr>
 	<th>&nbsp;</th>
 	<td><input type='submit' name='back1' value='< $langPreviousStep ' />&nbsp;<input type='submit' name='create3' value='$langNextStep >' /></td>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	</tbody>
 	</table>
 	<p align='right'><small>$langFieldsOptionalNote</small></p>
 	<br />";
 
 }  elseif (isset($_POST['create3']) or isset($_POST['back2'])) {
+	checkToken();
 	$nameTools = $langCreateCourse . " (" . $langCreateCourseStep." 3 " .$langCreateCourseStep2 . " 3 )" ;
 	@$tool_content .= "
 	<table width=\"99%\" align='left' class='FormData'>
@@ -325,6 +328,7 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 	<th>&nbsp;</th>
 	<td width='400'><input type='submit' name='back2' value='< $langPreviousStep '>&nbsp;
 	<input type='submit' name='create_course' value=\"$langFinalize\"></td>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	<td><p align='right'><small>$langFieldsOptionalNote</small></p></td>
 	</tr>
 	</tbody>
@@ -333,7 +337,7 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 
 // create the course and the course database
 if (isset($_POST['create_course'])) {
-
+		checkToken();
         $nameTools = $langCourseCreate;
         $facid = intval($faculte);
         $facname = find_faculty_by_id($facid);
