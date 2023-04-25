@@ -178,18 +178,18 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 	<td>
 	<table class='xinha_editor'>
 	<tr>
-	<td><textarea id='xinha' name='description' wrap=\"soft\">$description</textarea></td>
+	<td><textarea id='xinha' name='description' wrap=\"soft\">".mysql_real_escape_string($description)."</textarea></td>
 	</tr>
 	</table>
 	</td>
 	</tr>
 	<tr>
 	<th class='left'>$langCourseKeywords&nbsp;</th>
-	<td><textarea name='course_keywords' cols='85' rows='3' class='FormData_InputText'>$course_keywords</textarea></td>
+	<td><textarea name='course_keywords' cols='85' rows='3' class='FormData_InputText'>".mysql_real_escape_string($course_keywords)."</textarea></td>
 	</tr>
 	<tr>
 	<th class='left' width=\"160\">$langCourseAddon&nbsp;</th>
-	<td><textarea name='course_addon' cols='85' rows='5' class='FormData_InputText'>$course_addon</textarea></td>
+	<td><textarea name='course_addon' cols='85' rows='5' class='FormData_InputText'>".mysql_real_escape_string($course_addon)."</textarea></td>
 	</tr>
 	<tr>
 	<th>&nbsp;</th>

@@ -78,18 +78,20 @@ function prepare_message()
 }
 </script>';
 
+$token=makeToken();
+
 if ($is_adminOfCourse) {
     $tool_content .= "
       <div id=\"operations_container\">
         <ul id=\"opslist\">
-          <li><a href='messageList.php?reset=true' target='messageList' class=small_tools>$langWash</a></li>
-          <li><a href='messageList.php?store=true' target='messageList' class=small_tools>$langSave</a></li>
+          <li><a href='messageList.php?reset=true&csrf_token=$token' target='messageList' class=small_tools>$langWash</a></li>
+          <li><a href='messageList.php?store=true&csrf_token=$token' target='messageList' class=small_tools>$langSave</a></li>
         </ul>
       </div>";
 }
 
-$token=makeToken();
-echo ($token);
+
+
 
 $tool_content .= "
 <form name='chatForm' action='messageList.php' method='get' target='messageList' onSubmit='return prepare_message();'>
