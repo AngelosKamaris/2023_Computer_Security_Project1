@@ -354,8 +354,6 @@ function submit_work($id) {
 	 //check if pclzip is installed
 	 include '../../include/pclzip/pclzip.lib.php';
 	 //check if pclzip is installed
-	 echo $ext;
-	 fopen("$workPath/$secret/giannis1.txt", "w");
 	 $archive = new PclZip("$workPath/$secret/$local_name.zip");
 	 $v_list = $archive->create("$workPath/$secret/$local_name.$ext", PCLZIP_OPT_REMOVE_PATH, "$workPath/$secret");
 	 //remove file
