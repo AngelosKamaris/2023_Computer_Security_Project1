@@ -1,4 +1,15 @@
-<?php session_start();
+<?php
+$cookieParams = session_get_cookie_params();
+$cookieParams['httponly'] = true; 
+session_set_cookie_params(
+    $cookieParams['lifetime'],
+    $cookieParams['path'],
+    $cookieParams['domain'],
+    $cookieParams['secure'],
+    $cookieParams['httponly']
+);
+session_start();
+echo "here<br>";
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System
@@ -48,9 +59,10 @@ $tool_content = "";
 
 // first check
 // check if we can connect to database. If not then eclass is most likely not installed
-// if (isset($mysqlServer) and isset($mysqlUser) and isset($mysqlPassword)) {
+if (isset($mysqlServer) and isset($mysqlUser) and isset($mysqlPassword)) {
 	$db = mysql_connect($mysqlServer, $mysqlUser, $mysqlPassword);
 	if (mysql_version()) mysql_query("SET NAMES utf8");
+}
 if (!$db) {
 	include "include/not_installed.php";
 }

@@ -61,7 +61,7 @@ $authmethods = get_auth_active_methods();
 $msg = get_auth_info($auth);
 $settings = get_auth_settings($auth);
 if(!empty($msg)) $nameTools = "$langConfirmUser ($msg)";
-
+$token=makeToken();
 if (isset($p) and ($p)) {
 	$tool_content .= "<form method='post' action='ldapsearch_prof.php'>";
 } else {
@@ -83,6 +83,7 @@ if (isset($p) and ($p)) {
 	<td>
 	<input type='hidden' name='auth' value='".$auth."'>
 	<input type='submit' name='is_submit' value='".$langSubmit."'>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	</td>
 	</tr>
 	</thead></table>

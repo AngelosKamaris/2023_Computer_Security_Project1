@@ -132,6 +132,7 @@ hContent;
 
 if ($is_adminOfCourse) {
 	if (isset($grade_comments)) {
+		checkToken();
 		$nameTools = $m['WorkView'];
 		$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 		submit_grade_comments($assignment, $submission, $grade, $comments);
@@ -142,9 +143,11 @@ if ($is_adminOfCourse) {
 	} elseif (isset($sid)) {
 		show_submission($sid);
 	} elseif (isset($_POST['new_assign'])) {
+		checkToken();
 		add_assignment($title, $comments, $desc, "$WorkEnd", $group_submissions);
 		show_assignments();
 	} elseif (isset($grades)) {
+		checkToken();
 		$nameTools = $m['WorkView'];
 		$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 		submit_grades($grades_id, $grades);
@@ -168,6 +171,7 @@ if ($is_adminOfCourse) {
 				$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 				show_edit_assignment($id);
 			} elseif ($choice == 'do_edit') {
+				checkToken();
 				$nameTools = $m['WorkView'];
 				$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 				edit_assignment($id);
@@ -187,6 +191,7 @@ if ($is_adminOfCourse) {
 } else {
 	if (isset($id)) {
 		if (isset($work_submit)) {
+			checkToken();
 			$nameTools = $m['SubmissionStatusWorkInfo'];
 			$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 			$navigation[] = array("url"=>"work.php?id=$id", "name"=>$m['WorkView']);
@@ -380,7 +385,7 @@ function new_assignment()
 	$month	= date("m");
 	$year	= date("Y");
 
-
+  $token=makeToken();
 	$tool_content .= "
   <form action='work.php' method='post' onsubmit='return checkrequired(this, \"title\");'>
     <table width='99%' class='FormData'>
@@ -423,6 +428,7 @@ function new_assignment()
     <tr>
       <th>&nbsp;</th>
       <td><input type='submit' name='new_assign' value='$langAdd' /></td>
+	  <input type='hidden' name='csrf_token' value='$token' />
     </tr>
     </tbody>
     </table>
@@ -509,7 +515,7 @@ function show_edit_assignment($id)
       <th class="left">${m['deadline']}:</th>
       <td>
 cData;
-
+	$token=makeToken();
 	$tool_content .= getJsDeadline($deadline)."
       </td>
     </tr>
@@ -536,6 +542,7 @@ cData;
     <tr>
       <th class='left'>&nbsp;</th>
       <td><input type='submit' name='do_edit' value='$langEdit' /></td>
+	  <input type='hidden' name='csrf_token' value='$token' />
     </tr>
     </tbody>
     </table>
@@ -644,6 +651,7 @@ function show_submission_form($id)
 		"<a href='../group/document.php?userGroupId=$gid'>".
 		"$m[group_documents]</a> $m[select_publish]</p>";
 	} else {
+		$token=makeToken();
 		$tool_content .= <<<cData
 
     <form enctype="multipart/form-data" action="work.php" method="post">
@@ -666,6 +674,7 @@ function show_submission_form($id)
     <tr>
       <th>&nbsp;</th>
       <td><input type="submit" value="${langSubmit}" name="work_submit" /><br />$langNotice3</td>
+	  <input type="hidden" name="csrf_token" value="$token" />
     </tr>
     </tbody>
     </table>
@@ -976,7 +985,7 @@ cData;
 
 	$tool_content .="</tbody></table>";
 
-
+		$token=makeToken();
 	$tool_content .= "
     <br />
     <table class='FormData' width='99%'>
@@ -984,6 +993,7 @@ cData;
     <tr>
       <th class='left' width='220'>&nbsp;</th>
       <td><input type='submit' name='submit_grades' value='${langGradeOk}'></td>
+	  <input type='hidden' name='csrf_token' value='$token' />
     </tr>
     </tbody>
     </table>

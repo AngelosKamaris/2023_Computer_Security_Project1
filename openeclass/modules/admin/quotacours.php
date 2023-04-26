@@ -79,6 +79,7 @@ if (isset($search) && ($search=="yes")) {
 }
 // Update course quota
 if (isset($submit))  {
+  checkToken();
 	$dq = $dq * 1000000;
         $vq = $vq * 1000000;
         $gq = $gq * 1000000;
@@ -106,6 +107,7 @@ else {
 	$gq = $q['group_quota'] / 1000000;
 	$drq = $q['dropbox_quota'] / 1000000;
 	// Constract the edit form
+  $token=makeToken();
 	$tool_content .= "
 <form action=".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method=\"post\">
   <table class=\"FormData\" width=\"99%\" align=\"left\">
@@ -138,6 +140,7 @@ else {
   <tr>
     <th>&nbsp;</th>
     <td><input type='submit' name='submit' value='$langModify'></td>
+    <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
   </tr>
   </tbody>
   </table>

@@ -63,6 +63,7 @@ $lastpage = 'ldapnewuser.php?p=TRUE&amp;auth='.$auth.'&amp;ldap_email='.$ldap_em
 $errormessage = "<br/><p>$ldapback <a href='$lastpage'>$ldaplastpage</a></p>";
 
 if(!empty($is_submit)) {
+	checkToken();
 	if (empty($ldap_email) or empty($ldap_passwd)) // check for empty username-password
 	{
 		$tool_content .= "<table width=\"99%\"><tbody>
@@ -103,7 +104,8 @@ if(!empty($is_submit)) {
 		$is_valid = auth_user_login($auth,$ldap_email,$ldap_passwd);
 	}	
 
-	if ($is_valid) { // connection successful	
+	if ($is_valid) { // connection successful
+		$token=makeToken();
 		$tool_content .= "<table width='99%' style='border: 1px solid #edecdf;'>
 		<thead><tr><td>
 		<form action='$_SERVER[PHP_SELF]' method='post'>" .
@@ -152,6 +154,7 @@ if(!empty($is_submit)) {
 		<tr>
 		<th class='left'>&nbsp;</th>
 		<td><input type=\"submit\" name=\"submit\" value=\"".$langRegistration."\" />
+		<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 		<input type='hidden' name=\"uname\" value=\"".$ldap_email."\" />
 		<input type='hidden' name=\"password\" value=\"".$ldap_passwd."\" />
 		<input type='hidden' name=\"auth\" value=\"".$auth."\" />
@@ -171,6 +174,7 @@ if(!empty($is_submit)) {
 // registration
 // -----------------------------------------
 if (isset($submit))  {
+	checkToken();
 	$uname = $_POST['uname'];
 	$uname = escapeSimple($uname);
 	

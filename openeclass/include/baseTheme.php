@@ -38,6 +38,8 @@
  * interface. In that case function drawPerso needs to be called.
  *
  */
+$_SERVER ['PHP_SELF']=htmlentities($_SERVER ['PHP_SELF']);
+
 include ('init.php');
 if ($is_adminOfCourse and isset($currentCourseID)) {
 	if (isset($_GET['hide']) and $_GET['hide'] == 0) {
@@ -46,6 +48,7 @@ if ($is_adminOfCourse and isset($currentCourseID)) {
 		db_query("UPDATE accueil SET visible = 1 WHERE id='$eclass_module_id'", $currentCourseID);
 	}
 }
+include 'csrf_func.php';
 //template path for logged out + logged in (ex., when session expires)
 $extraMessage = ""; //initialise var for security
 if (isset($errorMessagePath)) {

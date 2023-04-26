@@ -84,6 +84,7 @@ if((!empty($u)) && ctype_digit($u) )	// validate the user id
 		$tool_content .= "
     </ul>
   </div>";
+  $token=makeToken();
 		$tool_content .= "
 <form name='edituser' method='post' action='$_SERVER[PHP_SELF]'>
   <table class='FormData' width='99%' align='left'>
@@ -206,6 +207,7 @@ $tool_content .= "
       <input type='hidden' name='u_submitted' value='1' />
       <input type='hidden' name='registered_at' value='".$info['registered_at']."' />
       <input type='submit' name='submit_edituser' value='$langModify' />
+	  <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
     </td>
   </tr>
   <tr>
@@ -287,6 +289,7 @@ $tool_content .= "
 			}
 		}
 	}  else { // if the form was submitted then update user
+		checkToken();
 
 		// get the variables from the form and initialize them
 		$fname = isset($_POST['fname'])?$_POST['fname']:'';

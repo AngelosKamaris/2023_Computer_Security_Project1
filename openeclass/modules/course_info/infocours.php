@@ -57,6 +57,7 @@ $head_content = <<<hContent
 hContent;
 
 if (isset($_POST['submit'])) {
+        checkToken();
         if (empty($_POST['title'])) {
                 $tool_content .= "<p class='caution_small'>$langNoCourseTitle<br />
                                   <a href='$_SERVER[PHP_SELF]'>$langAgain</a></p><br />";
@@ -154,9 +155,9 @@ if (isset($_POST['submit'])) {
                         <p><a href='{$urlServer}courses/$currentCourseID/index.php'>$langBackCourse</a></p><br />";
         }
 } else {
-
+                $token=makeToken();
 		$tool_content .= "<div id='operations_container'><ul id='opslist'>";
-		$tool_content .= "<li><a href='archive_course.php'>$langBackupCourse</a></li>
+		$tool_content .= "<li><a href='archive_course.php?csrf_token=$token'>$langBackupCourse</a></li>
   		<li><a href='delete_course.php'>$langDelCourse</a></li>
     		<li><a href='refresh_course.php'>$langRefreshCourse</a></li></ul></div>";
 
@@ -182,7 +183,6 @@ if (isset($_POST['submit'])) {
 		$course_addon = q($c['course_addon']);
 		$password = q($c['password']);
 		$checkpasssel = empty($password)? '': " checked='1'";
-
 		@$tool_content .="
 		<form method='post' action='$_SERVER[PHP_SELF]'>
 		<table width='99%' align='left'>
@@ -309,6 +309,7 @@ if (isset($_POST['submit'])) {
       <tr>
         <th class='left' width='150'>&nbsp;</th>
         <td><input type='submit' name='submit' value='$langSubmit' /></td>
+        <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
         <td>&nbsp;</td>
       </tr>
       </tbody>

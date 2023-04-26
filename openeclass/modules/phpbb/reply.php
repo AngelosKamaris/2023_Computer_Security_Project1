@@ -113,6 +113,7 @@ if (!does_exists($forum, $currentCourseID, "forum") || !does_exists($topic, $cur
 }
 
 if (isset($submit) && $submit) {
+	checkToken();
 	if (trim($message) == '') {
 		$tool_content .= $langEmptyMsg;
 		draw($tool_content, 2, 'phpbb', $head_content);
@@ -228,6 +229,7 @@ if (isset($submit) && $submit) {
 	</tr></tbody></table>";
 } else {
 	// Private forum logic here.
+	$token=makeToken();
 	if (($forum_type == 1) && !$user_logged_in && !$logging_in) {
 		$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
 		<table align='left' width='99%'>
@@ -241,6 +243,7 @@ if (isset($submit) && $submit) {
 		<input type='hidden' name='post' value='$post'>
 		<input type='hidden' name='quote' value='$quote'>
 		<input type='SUBMIT' name='logging_in' value='$langEnter'>
+		<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 		</td></tr></table>
 		</td></tr></table></form>";
 		draw($tool_content, 2, 'phpbb', $head_content);
@@ -304,6 +307,7 @@ if (isset($submit) && $submit) {
 	if (!isset($quote)) {
 		$quote = "";
 	}
+	$token=makeToken();
 	$tool_content .= "</th><td valign='top'>
 	<table class='xinha_editor'>
 	<tr>
@@ -319,6 +323,7 @@ if (isset($submit) && $submit) {
 	<input type='hidden' name='quote' value='$quote'>
 	<input type='submit' name='submit' value='$langSubmit'>&nbsp;
 	<input type='submit' name='cancel' value='$langCancelPost'>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	</td>
 	</tr>
 	</tbody></table>

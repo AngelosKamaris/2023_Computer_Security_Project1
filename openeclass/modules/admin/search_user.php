@@ -63,6 +63,7 @@ $new = isset($_GET['new'])?$_GET['new']:'yes';	//variable of declaring a new sea
 $user_surname = $user_firstname = $user_username = $user_am = $user_type = $user_registered_at_flag = $user_registered_at = $user_email = '';
 
 // display the search form
+$token=makeToken();
 $tool_content .= "<form action=\"listusers.php?search=".$new."\" method=\"post\" name=\"user_search\">
 <table width=\"99%\">
 <tbody><tr>
@@ -132,6 +133,7 @@ $tool_content .= "<tr>
 <td colspan=\"2\">
 <input type=\"hidden\" name=\"c\" value=\"searchlist\">
 <input type=\"submit\" name=\"search_submit\" value=\"$langSearch\">
+<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 </td>
 </tr>";
 $tool_content .= "\n  </tbody>\n  </table>\n</form>";

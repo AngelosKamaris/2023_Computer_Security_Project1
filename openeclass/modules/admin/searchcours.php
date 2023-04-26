@@ -78,6 +78,7 @@ if (isset($searchtitle) && isset($searchcode) && isset($searchtype) && isset($se
 }
 
 // search form
+$token=makeToken();
 $tool_content .= "<form action=\"listcours.php?search=yes\" method=\"post\">";
 $tool_content .= "<table width='99%' class='FormData' align='left'><tbody><tr>
 <th width='220'>&nbsp;</th><td><b>".$langSearchCriteria." ".@$newsearch."</b></td></tr>";
@@ -130,7 +131,8 @@ $resultFac=mysql_query("SELECT name FROM faculte ORDER BY number");
 $tool_content .= "</select></td></tr>";
 
 $tool_content .= "<tr><th>&nbsp;</th><td>
-	<input type='submit' name='search_submit' value='$langSearch'></td></tr>";
+	<input type='submit' name='search_submit' value='$langSearch'></td></tr>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>";
 $tool_content .= "</tbody></table></form>";
 
 // Display link to go back to index.php

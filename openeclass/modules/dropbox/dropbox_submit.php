@@ -93,6 +93,7 @@ var_dump($mysqli);
  */
 if (isset($_POST["submitWork"]))
 {
+	checkToken();
 	require("../../include/lib/fileUploadLib.inc.php");
 
 	$error = FALSE;

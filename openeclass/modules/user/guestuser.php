@@ -37,6 +37,7 @@ $tool_content = "";
 // IF PROF ONLY
 if ($is_adminOfCourse) {
         if (isset($_POST['submit'])) {
+                checkToken();
                 $password = autounquote($_POST['guestpassword']);
                 createguest($default_guest_username, $cours_id, $password);
                 $tool_content .= "<p class='success_small'>$langGuestSuccess<br />" .
@@ -54,7 +55,7 @@ if ($is_adminOfCourse) {
                                             'username' => $default_guest_username);
                         $submit_label = $langAdd;
                 }
-
+                $token=makeToken();
                 $tool_content .= "
                         <form method='post' action='$_SERVER[PHP_SELF]'>
 
@@ -88,6 +89,7 @@ if ($is_adminOfCourse) {
                         <tr>
                         <th>&nbsp;</th>
                         <td><input type='submit' name='submit' value='$submit_label' /></td>
+                        <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
                         <td>&nbsp;</td>
                         </tr>
                         </table>

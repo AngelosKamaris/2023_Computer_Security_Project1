@@ -65,6 +65,7 @@ $close = isset($_GET['close'])?$_GET['close']:(isset($_POST['close'])?$_POST['cl
 $id = isset($_GET['id'])?$_GET['id']:(isset($_POST['id'])?$_POST['id']:'');
 $show = isset($_GET['show'])?$_GET['show']:(isset($_POST['show'])?$_POST['show']:'');
 
+
 // Deal with navigation
 switch ($show) {
 	case "closed":
@@ -238,6 +239,7 @@ if (!empty($show) && ($show=="closed")) {
 } elseif(!empty($close)) {
 	switch($close) {
 	case '1':
+		checkToken();
 		$sql = db_query("UPDATE prof_request set status='2', date_closed=NOW() WHERE rid='$id'");
                 if ($list_statut == 1) {
         		$tool_content .= "<p><center>$langProfessorRequestClosed</p>";
@@ -246,8 +248,10 @@ if (!empty($show) && ($show=="closed")) {
                 }
 		break;
 	case '2':
+		checkToken();
 		$submit = isset($_POST['submit'])?$_POST['submit']:'';
 		if(!empty($submit)) {
+			checkToken();
 			// post the comment and do the delete action
 			if (!empty($comment)) {
 				$sql = "UPDATE prof_request set status = '3',
@@ -271,6 +275,7 @@ $langEmail: $emailhelpdesk";
 				}
 			}
 		} else {
+			$token=makeToken();
 			// display the form
 			$r = db_query("SELECT comment, profname, profsurname, profemail, statut
 				FROM prof_request WHERE rid = '$id'");
@@ -301,6 +306,7 @@ $langEmail: $emailhelpdesk";
 			</td></tr>
 			<tr><th class='left'>&nbsp;</th>
 			<td><input type='submit' name='submit' value='$langRejectRequest'>&nbsp;&nbsp;<small>($langRequestDisplayMessage)</small></td>
+			<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 			</tr></tbody></table>
 			</form>";
 			}
@@ -324,6 +330,7 @@ else
 			FROM prof_request
                         WHERE (status = 1 AND statut = $list_statut)");
     	$k = 0;
+		$token=makeToken();
 	while ($req = mysql_fetch_array($sql)) {
 		if ($k%2 == 0) {
 	              $tool_content .= "\n<tr>";
@@ -347,8 +354,8 @@ else
 			<small>".nice_format(date("Y-m-d", strtotime($req['date_open'])))."</small></td>";
 		$tool_content .= "<td align='center'>$req[comment]</td>";
 		$tool_content .= "<td align='center'>
-		<a href='$_SERVER[PHP_SELF]?id=$req[rid]&amp;close=1$reqtype' onclick='return confirmation();'>$langClose</a><br />
-		<a href='$_SERVER[PHP_SELF]?id=$req[rid]&amp;close=2$reqtype'>$langRejectRequest</a>";
+		<a href='$_SERVER[PHP_SELF]?id=$req[rid]&amp;close=1$reqtype&csrf_token=$token' onclick='return confirmation();'>$langClose</a><br />
+		<a href='$_SERVER[PHP_SELF]?id=$req[rid]&amp;close=2$reqtype&csrf_token=$token'>$langRejectRequest</a>";
 		switch($req['profpassword']) {
 			case 'ldap': $tool_content .= "<br />
 					<a href='../auth/ldapnewprofadmin.php?id=".urlencode($req['rid'])."&amp;auth=4'>
@@ -363,7 +370,7 @@ else
 					$langRegistration<br>($langViaImap)</td>\n  </tr>";
 				break;
 			default:  $tool_content .= "<br>
-					<a href='newuseradmin.php?id=".urlencode($req['rid'])."'>
+					<a href='newuseradmin.php?id=".urlencode($req['rid'])."&csrf_token=$token'>
 					$langRegistration
 					</a></td>\n  </tr>";
 				break;

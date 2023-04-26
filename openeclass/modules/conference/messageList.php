@@ -72,6 +72,7 @@ if (!file_exists($fileChatName)) {
 
 // reset command
 if (isset($_GET['reset']) && $is_adminOfCourse) {
+	checkToken();
 	$fchat = fopen($fileChatName,'w');
 	fwrite($fchat, $timeNow." ---- ".$langWashFrom." ---- ".$nick." --------\n");
 	fclose($fchat);
@@ -80,6 +81,7 @@ if (isset($_GET['reset']) && $is_adminOfCourse) {
 
 // store
 if (isset($_GET['store']) && $is_adminOfCourse) {
+	checkToken();
 	$saveIn = "chat.".date("Y-m-j-B").".txt";
 	$chat_filename = date("YmdGis").randomkeys("8").".txt";
 
@@ -97,6 +99,7 @@ if (isset($_GET['store']) && $is_adminOfCourse) {
 
 // add new line
 if (isset($chatLine) and trim($chatLine) != '') {
+	checkToken();
 	$fchat = fopen($fileChatName,'a');
 	$chatLine = mathfilter($chatLine, 12, '../../courses/mathimg/');
 	fwrite($fchat,$timeNow.' - '.$nick.' : '.stripslashes($chatLine)."\n");

@@ -75,6 +75,7 @@ if (isset($search) && ($search=="yes")) {
 }
 // Update course status
 if (isset($submit))  {
+	checkToken();
   // Update query
 	$sql = mysql_query("UPDATE cours SET visible='$formvisible' WHERE code='".mysql_real_escape_string($_GET['c'])."'");
 	// Some changes occured
@@ -94,6 +95,7 @@ else {
 	$visible = $row['visible'];
 	$visibleChecked[$visible]="checked";
 	// Constract edit form
+	$token=makeToken();
 	$tool_content .= "<form action=".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method=\"post\">
 	<table class=\"FormData\" width=\"99%\" align=\"left\">
 	<tbody>
@@ -115,6 +117,7 @@ else {
 	<tr>
 	<th>&nbsp;</th>
 	<td colspan=\"2\"><input type='submit' name='submit' value='$langModify'></td>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	</tr>
 	</tbody></table>
 	</form>";

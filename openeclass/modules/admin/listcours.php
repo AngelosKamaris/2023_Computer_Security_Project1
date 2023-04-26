@@ -75,6 +75,7 @@ $limit = isset($_GET['limit'])?$_GET['limit']:0;
 
 // A search has been submitted
 if (isset($search) && $search=="yes") {
+	checkToken();
 	$searchurl = "&search=yes";
 	// Search from post form
 	if (isset($search_submit)) {

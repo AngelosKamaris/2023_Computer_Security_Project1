@@ -122,6 +122,7 @@ if ($is_adminOfCourse) { // course admin
 			$message = format_message($message);
 		}
 		if (!isset($delete) || !$delete) {
+			checkToken();
 			$forward = 1;
 			$topic = $topic_id;
 			$forum = $forum_id;
@@ -246,6 +247,7 @@ if ($is_adminOfCourse) { // course admin
 		$navigation[]= array ("url"=>"viewtopic.php?topic=$topic&amp;forum=$forum", "name"=> $myrow['topic_title']);
 	
 		if (($myrow["forum_type"] == 1) && !$user_logged_in && !$logging_in) {
+			$token=makeToken();
 			// Private forum, no valid session, and login form not submitted...
 			$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
 			<table width='99%'>
@@ -264,6 +266,7 @@ if ($is_adminOfCourse) { // course admin
 			<input type='hidden' name='topic' value='$topic' />
 			<input type='hidden' name='post_id' value='$post_id' />
 			<input type='submit' name='logging_in' value='$langEnter' />
+			<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 			</td>
 			</tr>
 			</table></form>";
@@ -354,11 +357,13 @@ if ($is_adminOfCourse) { // course admin
 		<td><input type='checkbox' name='delete' /></td>
 		</tr>
 		<tr><th>&nbsp;</th><td>";
+		$token = makeToken();
 		
 		$tool_content .= "
 		<input type='hidden' name='post_id' value='$post_id' />
 		<input type='hidden' name='forum' value='$forum' />
 		<input type='submit' name='submit' value='$langSubmit' />
+		<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 		</td></tr>
 		</tbody></table></form>";
 	}

@@ -38,12 +38,14 @@ $tool_content = "";
 
 
 if (isset($_POST['submit'])) {
+	checkToken();
 	foreach (array('temp' => 2, 'garbage' => 5, 'archive' => 1, 'tmpUnzipping' => 1) as $dir => $days) {
 		$tool_content .= sprintf("<p class=kk>$langCleaningUp</p>", $days,
 			($days == 1)? $langDaySing: $langDayPlur, $dir);
 		cleanup("${webDir}courses/$dir", $days);
 	}
 } else {
+	$token=makeToken();
 	$tool_content .= "
     <table width='99%' class='FormData' align='left'>
     <tbody>
@@ -56,6 +58,7 @@ if (isset($_POST['submit'])) {
       <td>
          <form method='post' action='$_SERVER[PHP_SELF]'>
 	     <input type='submit' name='submit' value='$langCleanup'>
+		 <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
          </form>
       </td>
     </tr>

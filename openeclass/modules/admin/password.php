@@ -54,6 +54,7 @@ if (!isset($urlSecure)) {
 }
 
 if (!isset($changePass)) {
+	$token=makeToken();
 	$tool_content .= "
 <form method=\"post\" action=\"$passurl?submit=yes&changePass=do&userid=$userid\">
   <table class=\"FormData\" width=\"99%\" align=\"left\">
@@ -73,6 +74,7 @@ if (!isset($changePass)) {
   <tr>
     <th class=\"left\">&nbsp;</th>
     <td><input type=\"submit\" name=\"submit\" value=\"$langModify\"></td>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
   </tr>
   </tbody>
   </table>
@@ -80,6 +82,7 @@ if (!isset($changePass)) {
 }
 
 elseif (isset($submit) && isset($changePass) && ($changePass == "do")) {
+	checkToken();
 	$userid = $_REQUEST['userid'];
 	if (empty($_REQUEST['password_form']) || empty($_REQUEST['password_form1'])) {
 		$tool_content .= mes($langFields, "", 'caution');

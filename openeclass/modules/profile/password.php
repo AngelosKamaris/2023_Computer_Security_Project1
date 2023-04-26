@@ -55,7 +55,7 @@ var_dump($mysqli);
 
 
 if (isset($submit) && isset($changePass) && ($changePass == "do")) {
-
+	checkToken();
 	if (empty($_REQUEST['password_form']) || empty($_REQUEST['password_form1']) || empty($_REQUEST['old_pass'])) {
 		header("location:". $passurl."?msg=3");
 		exit();
@@ -165,6 +165,7 @@ if(isset($msg)) {
 }
 
 if (!isset($changePass)) {
+	$token = makeToken();
 	$tool_content .= "
 <form method=\"post\" action=\"$passurl?submit=yes&changePass=do\">
   <table width=\"99%\">
@@ -186,6 +187,7 @@ if (!isset($changePass)) {
 	<tr>
       <th>&nbsp;</th>
       <td><input type=\"Submit\" name=\"submit\" value=\"$langModify\"></td>
+	  <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
     </tr>
 	</tbody>
     </table>

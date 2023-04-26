@@ -51,6 +51,7 @@ if (!$is_adminOfCourse)
 }
 
 if(isset($submit)) {
+	checkToken();
 	$output = array();
 	mysql_select_db($mysqlMainDb);
 	if (isset($delusers))
@@ -82,7 +83,7 @@ if(isset($submit)) {
 	$tool_content .="<p align=\"right\"><a href='infocours.php'>$langBack</a></p>";
 
 } else {
-
+	$token=makeToken();
 	$tool_content .= "
 <form action='refresh_course.php' method='post'>
 
@@ -115,6 +116,7 @@ if(isset($submit)) {
     <tr>
       <th>&nbsp;</th>
       <td colspan='2'><input type='submit' value='$langSubmitActions' name='submit'></td>
+	  <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
     </tr>
     </tbody>
     </table>

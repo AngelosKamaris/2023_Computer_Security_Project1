@@ -30,6 +30,7 @@ $helpTopic = 'Conference';
 $tool_content = "";
 include '../../include/baseTheme.php';
 
+
 if(!isset($MCU))
 	$MCU="";
 
@@ -77,15 +78,20 @@ function prepare_message()
 }
 </script>';
 
+$token=makeToken();
+
 if ($is_adminOfCourse) {
     $tool_content .= "
       <div id=\"operations_container\">
         <ul id=\"opslist\">
-          <li><a href='messageList.php?reset=true' target='messageList' class=small_tools>$langWash</a></li>
-          <li><a href='messageList.php?store=true' target='messageList' class=small_tools>$langSave</a></li>
+          <li><a href='messageList.php?reset=true&csrf_token=$token' target='messageList' class=small_tools>$langWash</a></li>
+          <li><a href='messageList.php?store=true&csrf_token=$token' target='messageList' class=small_tools>$langSave</a></li>
         </ul>
       </div>";
 }
+
+
+
 
 $tool_content .= "
 <form name='chatForm' action='messageList.php' method='get' target='messageList' onSubmit='return prepare_message();'>
@@ -98,6 +104,7 @@ $tool_content .= "
       <b>$langTypeMessage</b><br />
       <input type='text' name='msg' size='80'style='border: 1px solid #CAC3B5; background: #fbfbfb;'>
       <input type='hidden' name='chatLine'>
+      <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
       <input type='submit' value=' >> '>
 
     </td>

@@ -37,7 +37,7 @@ $tool_content = "";
 
 // IF PROF ONLY
 if($is_adminOfCourse) {
-
+	$token=makeToken();
     $tool_content .= "
     <form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\" enctype=\"multipart/form-data\">";
 	$tool_content .= <<<tCont2
@@ -58,6 +58,7 @@ if($is_adminOfCourse) {
       <th class="left">&nbsp;</th>
       <td><input type="submit" value="$langAdd"></td>
       <td align="right">&nbsp;</td>
+	  <input type="hidden" name="csrf_token" value="$token"/>
     </tr>
 	</tbody>
 	</table>
@@ -81,6 +82,7 @@ if(!empty($search_uname)) {
 }
 // added by jexi
 if (!empty($users_file)) {
+	checkToken();
 	$tmpusers=trim($_FILES['users_file']['name']);
 	$tool_content .= <<<tCont3
 		<table width=99%>
@@ -141,6 +143,7 @@ $tool_content .= <<<tCont4
 	<tbody>
 tCont4;
 $i = 1;
+$token=makeToken();
 while ($myrow = mysql_fetch_array($result)) {
 	if ($i % 2 == 0) {
 		$tool_content .= "<tr>";
@@ -151,7 +154,7 @@ while ($myrow = mysql_fetch_array($result)) {
 	"<td>$myrow[prenom]</td>".
 	"<td>$myrow[nom]</td>".
 	"<td>$myrow[username]</td>".
-	"<td><a href=\"$_SERVER[PHP_SELF]?add=$myrow[user_id]\">".
+	"<td><a href=\"$_SERVER[PHP_SELF]?add=$myrow[user_id]&csrf_token=$token\">".
 	"$langRegister</a></td></tr>\n";
 	$i++;
 }

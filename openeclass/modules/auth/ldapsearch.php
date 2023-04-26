@@ -58,6 +58,7 @@ $errormessage = "<br/><p>$ldapback <a href=\"$lastpage\">$ldaplastpage</a></p>";
 
 if(!empty($is_submit))
 {
+	checkToken();
 	if (empty($ldap_email) or empty($ldap_passwd)) // check for empty username-password
 	{
 		$tool_content .= "<table width=\"99%\"><tbody><tr>
@@ -98,6 +99,7 @@ if(!empty($is_submit))
 		$is_valid = auth_user_login($auth,$ldap_email,$ldap_passwd);
 
 		if($is_valid) {  // Successfully connected
+			$token=makeToken();
 			$tool_content .= "<table width=\"99%\" align='left' class='FormData'><thead>
 			<tr><td>
 			<form action=\"$_SERVER[PHP_SELF]\" method=\"post\">" .
@@ -135,6 +137,7 @@ if(!empty($is_submit))
 			$tool_content .= "</td></tr>";
 			$tool_content .= "<tr><th class='left'>&nbsp;</th>
 			<td><input type='submit' name='submit' value='$langRegistration' />
+			<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 			<input type='hidden' name='uname' value='$ldap_email' />
 			<input type='hidden' name='password' value='$ldap_passwd' />
 			<input type='hidden' name='auth' value='$auth' />
@@ -159,6 +162,7 @@ if(!empty($is_submit))
 // ----------------------------------------------
 
 if (isset($_POST['submit'])) {
+	checkToken();
 	$uname = $_POST['uname'];
 	$registration_errors = array();
 		// check if there are empty fields

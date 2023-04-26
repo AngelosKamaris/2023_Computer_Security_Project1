@@ -21,6 +21,7 @@ $error = '';
 $acceptable_fields = array('first', 'last', 'email', 'id', 'phone', 'username');
 
 if (isset($_POST['submit'])) {
+        checkToken();
         $send_mail = isset($_POST['send_mail']) && $_POST['send_mail'];
         $unparsed_lines = '';
         $new_users_info = array();
@@ -107,6 +108,7 @@ if (isset($_POST['submit'])) {
         }
         $tool_content .= "</table>\n";
 } else {
+        $token=makeToken();
         $req = db_query("SELECT id, name FROM faculte order by id");
         while ($n = mysql_fetch_array($req)) {
                 $facs[$n['id']] = $n['name'];
@@ -142,6 +144,7 @@ if (isset($_POST['submit'])) {
 </tr>
 <tr><th>&nbsp;</th>
     <td><input type='submit' name='submit' value='$langSubmit' /></td>
+    <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 </tr>
 </table>
 </form>";

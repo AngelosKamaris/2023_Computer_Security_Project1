@@ -68,6 +68,7 @@ $tool_content = "";
 ******************************************************************************/
 // Save new config.php
 if (isset($submit))  {
+  checkToken();
 	// Make config directory writable
 	@chmod( "../../config",777 );
 	@chmod( "../../config", 0777 );
@@ -291,6 +292,7 @@ $tool_content .= "
     <th class=\"left\"><b>\$durationAccount:</b></th>
     <td><input type=\"text\" name=\"formdurationAccount\" size=\"40\" value=\"".$durationAccount."\"></td>
 </tr>";
+$token=makeToken();
 $tool_content .= "
   <tr>
     <th class=\"left\"><b>\$encryptedPasswd:</b></th>
@@ -306,6 +308,7 @@ $tool_content .= "
   <tr>
     <th class=\"left\">&nbsp;</th>
     <td><input type='submit' name='submit' value='$langModify'></td>
+    <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
   </tr>
   </tbody>
   </table>

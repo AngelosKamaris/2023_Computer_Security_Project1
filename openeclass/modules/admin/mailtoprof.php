@@ -69,6 +69,7 @@ $tool_content = "";
 
 // Send email after form post
 if (isset($_POST['submit']) && ($_POST['body_mail'] != "") && ($_POST['submit'] == $langSend)) {
+	checkToken();
 	// Where to send the email
 	if ($_POST['sendTo'] == "0") {
 		// All users
@@ -97,6 +98,7 @@ $langEmail : $emailhelpdesk
 	// Display result and close table correctly
 	$tool_content .= "<p class=\"success_small\">$emailsuccess</p>";
 } else {
+	$token=makeToken();
         // Display form to administrator
         $tool_content .= "
 <form action='$_SERVER[PHP_SELF]' method='post'>
@@ -117,6 +119,7 @@ $langEmail : $emailhelpdesk
   <tr>
     <th>&nbsp;</th>
     <td><input type=\"submit\" name=\"submit\" value=\"$langSend\"></input></td>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
   </tr>
   </tbody>
   </table>
