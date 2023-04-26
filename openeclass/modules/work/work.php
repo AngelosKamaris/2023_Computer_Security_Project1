@@ -256,6 +256,8 @@ function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 
 
 function submit_work($id) {
+	
+
 
 	global $tool_content, $workPath, $uid, $stud_comments, $group_sub, $REMOTE_ADDR, $langUploadSuccess,
 	$langBack, $langWorks, $langUploadError, $currentCourseID, $langExerciseNotPermit, $langUnwantedFiletype;
@@ -318,7 +320,7 @@ function submit_work($id) {
 		return;
 	}
 	$secret = work_secret($id);
-        $ext = get_file_extension($_FILES['userfile']['name']);
+    $ext = get_file_extension($_FILES['userfile']['name']);
 	$filename = "$secret/$local_name" . (empty($ext)? '': '.' . $ext);
 	if (move_uploaded_file($_FILES['userfile']['tmp_name'], "$workPath/$filename")) {
 		$msg2 = "$langUploadSuccess";//to message
@@ -342,8 +344,19 @@ function submit_work($id) {
 				'$filename','".$_FILES['userfile']['name'].
 				"', '$stud_comments')", $currentCourseID);
 		}
+		//create new  PCLZIP object
+		//$archive = new PclZip("$workPath/giannis.zip");
+	 //check if pclzip is installed
+	 include '../../include/pclzip/pclzip.lib.php';
+	 //check if pclzip is installed
+	 echo $ext;
+	 fopen("$workPath/$secret/giannis1.txt", "w");
+	 $archive = new PclZip("$workPath/$secret/$local_name.zip");
+	 $v_list = $archive->create("$workPath/$secret/$local_name.$ext", PCLZIP_OPT_REMOVE_PATH, "$workPath/$secret");
+	 //remove file
+	 unlink("$workPath/$secret/$local_name.$ext");
 
-		$tool_content .="<p class='success_small'>$msg2<br />$msg1<br /><a href='work.php'>$langBack</a></p><br />";
+	 $tool_content .="<p class='success_small'>$msg2<br />$msg1<br /><a href='work.php'>$langBack</a></p><br />";
 	} else {
 	$tool_content .="    <p class='caution_small'>$langUploadError<br /><a href='work.php'>$langBack</a></p><br />";
 	}
