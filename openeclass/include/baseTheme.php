@@ -38,6 +38,8 @@
  * interface. In that case function drawPerso needs to be called.
  *
  */
+$_SERVER ['PHP_SELF']=htmlentities($_SERVER ['PHP_SELF']);
+
 include ('init.php');
 if ($is_adminOfCourse and isset($currentCourseID)) {
 	if (isset($_GET['hide']) and $_GET['hide'] == 0) {
