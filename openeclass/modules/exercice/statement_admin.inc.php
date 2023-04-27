@@ -1,4 +1,7 @@
-<?php // $Id: statement_admin.inc.php,v 1.17 2009-11-24 10:57:21 jexi Exp $
+<?php 
+
+die('This is not meant to be used');
+// $Id: statement_admin.inc.php,v 1.17 2009-11-24 10:57:21 jexi Exp $
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System
