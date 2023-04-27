@@ -41,6 +41,8 @@ include 'auth.inc.php';
 include('../../include/sendMail.inc.php');
 $nameTools = $lang_remind_pass;
 
+$userName=mysql_real_escape_string(htmlentities($userName));
+
 function check_password_editable($password)
 {
 	$authmethods = array("pop3","imap","ldap","db");
@@ -97,6 +99,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 	}
 } elseif ((!isset($email) || !email_seems_valid($email)
      || !isset($userName) || empty($userName)) && !isset($_REQUEST['do'])) {
+		
 
 		$lang_pass_invalid_mail= "$lang_pass_invalid_mail1 $lang_pass_invalid_mail2 $lang_pass_invalid_mail3";
 
