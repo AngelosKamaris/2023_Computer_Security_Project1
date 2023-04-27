@@ -141,17 +141,17 @@ $registration_errors = array();
             }
 
             db_query('INSERT INTO prof_request SET
-                                profname = ' . autoquote($prenom_form). ',
-                                profsurname = ' . autoquote($nom_form). ',
-                                profuname = ' . autoquote($uname). ',
-                                profemail = ' . autoquote($email_form). ',
-                                proftmima = ' . autoquote($department). ',
-                                profcomm = ' . autoquote($userphone). ',
+                                profname = ' . autoquote(htmlentities($prenom_form)). ',
+                                profsurname = ' . autoquote(htmlentities($nom_form)). ',
+                                profuname = ' . autoquote(htmlentities($uname)). ',
+                                profemail = ' . autoquote(htmlentities($email_form)). ',
+                                proftmima = ' . autoquote(htmlentities($department)). ',
+                                profcomm = ' . autoquote(htmlentities($userphone)). ',
                                 status = 1,
                                 statut = 1,
                                 date_open = NOW(),
-                                comment = ' . autoquote($usercomment). ',
-                                lang = ' . autoquote($proflang),
+                                comment = ' . autoquote(htmlentities($usercomment)). ',
+                                lang = ' . autoquote(htmlentities($proflang)),
                      $mysqlMainDb);
 
             //----------------------------- Email Message --------------------------
