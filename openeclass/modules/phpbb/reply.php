@@ -73,8 +73,8 @@ hContent;
 
 include_once("./config.php");
 include("functions.php");
-$forum=mysql_real_escape_string($forum);
-$topic=mysql_real_escape_string($topic);
+$forum=mysql_real_escape_string(htmlentities($forum));
+$topic=mysql_real_escape_string(htmlentities($topic));
 
 if (isset($post_id) && $post_id) {
 	$post_id=mysql_real_escape_string($post_id);

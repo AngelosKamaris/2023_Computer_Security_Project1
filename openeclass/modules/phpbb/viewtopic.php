@@ -83,8 +83,8 @@ if (isset($_GET['all'])) {
 } else {
         $paging = true;
 }
-$forum=mysql_real_escape_string($forum);
-$topic=mysql_real_escape_string($topic);
+$forum=mysql_real_escape_string(htmlentities($forum));
+$topic=mysql_real_escape_string(htmlentities($topic));
 
 $sql = "SELECT f.forum_type, f.forum_name
 	FROM forums f, topics t 
