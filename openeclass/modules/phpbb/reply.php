@@ -114,7 +114,7 @@ if (!does_exists($forum, $currentCourseID, "forum") || !does_exists($topic, $cur
 
 if (isset($submit) && $submit) {
 	checkToken();
-	// $message = htmlspecialchars($message);
+	$message = htmlspecialchars($message);
 	if (trim($message) == '') {
 		$tool_content .= $langEmptyMsg;
 		draw($tool_content, 2, 'phpbb', $head_content);
