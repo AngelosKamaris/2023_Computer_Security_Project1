@@ -39,8 +39,8 @@ $nameTools = $langOrganisation;
 $navigation[]= array ("url"=>"../phpbb/index.php", "name"=> $langForums);
 
 $tool_content = $head_content = "";
-$forum_id = htmlentities(intval(@$_REQUEST['forum_id']));
-$cat_id = htmlentities(intval(@$_REQUEST['cat_id']));
+$forum_id = htmlentities(intval(@$_REQUEST['forum_id']), ENT_COMPAT, "UTF-8");
+$cat_id = htmlentities(intval(@$_REQUEST['cat_id']), ENT_COMPAT, "UTF-8");
 if($is_adminOfCourse) {
 
 $head_content .= '
@@ -109,8 +109,8 @@ if(isset($forumgo)) {
 				} else {
 					$tool_content .= "\n<tr class=\"odd\">";
 				}
-				$forum_name=htmlentities($forum_name);
-				$forum_desc=htmlentities($forum_desc);
+				$forum_name=htmlentities($forum_name, ENT_COMPAT, "UTF-8");
+				$forum_desc=htmlentities($forum_desc, ENT_COMPAT, "UTF-8");
 				$tool_content .= "<td align='right'>$i.</td>
 				<td align='left'>$forum_name</td>
 				<td align='left'>$forum_desc&nbsp;</td>";
@@ -166,8 +166,8 @@ if(isset($forumgo)) {
     		cat_id, forum_type FROM forums WHERE forum_id='$forum_id'", $currentCourseID);
 		list($forum_id, $forum_name, $forum_desc, $forum_access, $forum_moderator, $cat_id_1,
 		$forum_type) = mysql_fetch_row($result);
-		$forum_name=htmlentities($forum_name);
-		$forum_desc=htmlentities($forum_desc);
+		$forum_name=htmlentities($forum_name, ENT_COMPAT, "UTF-8");
+		$forum_desc=htmlentities($forum_desc, ENT_COMPAT, "UTF-8");
 		$token=makeToken();
 		$tool_content .= "
 		<form action=\"$_SERVER[PHP_SELF]?forumgosave=yes&ctg=$ctg&cat_id=".@$cat_id."\" method=post onsubmit=\"return checkrequired(this,'forum_name');\">
@@ -193,8 +193,8 @@ if(isset($forumgo)) {
 		$result = db_query("select cat_id, cat_title from catagories", $currentCourseID);
 	
 		while(list($cat_id, $cat_title) = mysql_fetch_row($result)) {
-			$cat_id=htmlentities($cat_id);
-			$cat_title=htmlentities($cat_title);
+			$cat_id=htmlentities($cat_id, ENT_COMPAT, "UTF-8");
+			$cat_title=htmlentities($cat_title, ENT_COMPAT, "UTF-8");
 			if ($cat_id == $cat_id_1) {
 					$tool_content .= "<option value='$cat_id' selected>$cat_title</option>"; 
 				} else {
@@ -215,8 +215,8 @@ if(isset($forumgo)) {
 	elseif(isset($forumcatedit)) {
 		$result = db_query("select cat_id, cat_title from catagories where cat_id='$cat_id'", $currentCourseID);
 		list($cat_id, $cat_title) = mysql_fetch_row($result);
-		$cat_title=htmlentities($cat_title);
-		$cat_id=htmlentities($cat_id);
+		$cat_title=htmlentities($cat_title, ENT_COMPAT, "UTF-8");
+		$cat_id=htmlentities($cat_id, ENT_COMPAT, "UTF-8");
 		$token=makeToken();
 		$tool_content .= "
   		<form action='$_SERVER[PHP_SELF]?forumcatsave=yes' method=post onsubmit=\"return checkrequired(this,'cat_title');\">
@@ -242,7 +242,7 @@ if(isset($forumgo)) {
 	// save forum category
 	elseif (isset($forumcatsave)) {
 		checkToken();
-		$cat_title = mysql_real_escape_string(htmlentities($cat_title));
+		$cat_title = mysql_real_escape_string(htmlentities($cat_title, ENT_COMPAT, "UTF-8"));
 		db_query("update catagories set cat_title='$cat_title' where cat_id='$cat_id'", $currentCourseID);
 		$tool_content .= "\n<p class=\"success_small\">$langNameCatMod<br /><a href=\"$_SERVER[PHP_SELF]?forumadmin=yes\">$langBack</a></p>";
 	}
@@ -255,13 +255,13 @@ if(isset($forumgo)) {
 		$forum_name = mysql_real_escape_string($forum_name);
 		$forum_type = mysql_real_escape_string($forum_type);
 		$ctg = mysql_real_escape_string($ctg);
-		$cat_id= htmlentities($cat_id);
-		$forum_moderator= htmlentities($forum_moderator);
-		$forum_name= htmlentities($forum_name);
-		$forum_type= htmlentities($forum_type);
-		$forum_desc=htmlentities($forum_desc);
-		$ctg= htmlentities($ctg);
-		$cat_id= htmlentities($cat_id);
+		$cat_id= htmlentities($cat_id, ENT_COMPAT, "UTF-8");
+		$forum_moderator= htmlentities($forum_moderator, ENT_COMPAT, "UTF-8");
+		$forum_name= htmlentities($forum_name, ENT_COMPAT, "UTF-8");
+		$forum_type= htmlentities($forum_type, ENT_COMPAT, "UTF-8");
+		$forum_desc=htmlentities($forum_desc, ENT_COMPAT, "UTF-8");
+		$ctg= htmlentities($ctg, ENT_COMPAT, "UTF-8");
+		$cat_id= htmlentities($cat_id, ENT_COMPAT, "UTF-8");
 		$nameTools = $langDelete;
 		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
 		$result = @db_query("SELECT user_id FROM users WHERE username='$forum_moderator'", $currentCourseID);
@@ -290,10 +290,12 @@ if(isset($forumgo)) {
 		$forum_name = mysql_real_escape_string($forum_name);
 		$forum_desc = mysql_real_escape_string($forum_desc);
 		$forum_type = mysql_real_escape_string($forum_type);
-		$forum_moderator= htmlentities($forum_moderator);
-		$forum_name= htmlentities($forum_name);
-		$forum_type= htmlentities($forum_type);
-		$forum_desc= htmlentities($forum_desc);
+		$forum_moderator= htmlentities($forum_moderator, ENT_COMPAT, "UTF-8");
+		// $forum_name= htmlentities($forum_name);
+		//htmlentities on forum_name with utf8 encoding
+		$forum_name= htmlentities($forum_name, ENT_COMPAT, "UTF-8");
+		$forum_type= htmlentities($forum_type, ENT_COMPAT, "UTF-8");
+		$forum_desc= htmlentities($forum_desc, ENT_COMPAT, "UTF-8");
 		$nameTools = $langAdd;
 		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
 		$result = @db_query("SELECT user_id FROM users WHERE username='$forum_moderator'", $currentCourseID);
@@ -370,7 +372,7 @@ if(isset($forumgo)) {
 		$result = db_query("SELECT cat_id, cat_title FROM catagories ORDER BY cat_id", $currentCourseID);
 		$i=1;
 		while(list($cat_id, $cat_title) = mysql_fetch_row($result)) {
-			$cat_title=htmlentities($cat_title);
+			$cat_title=htmlentities($cat_title, ENT_COMPAT, "UTF-8");
 			$gets = db_query("SELECT COUNT(*) AS total FROM forums WHERE cat_id=$cat_id", $currentCourseID);
 			$numbers = mysql_fetch_array($gets);
 			list($forum_cat_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
