@@ -1,5 +1,6 @@
 <?php
 
+die('This is not meant to be used');
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System

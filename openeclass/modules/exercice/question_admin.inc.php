@@ -1,4 +1,7 @@
-<? // $Id: question_admin.inc.php,v 1.21 2009-11-20 14:57:25 jexi Exp $
+<? 
+
+die('This is not meant to be used');
+// $Id: question_admin.inc.php,v 1.21 2009-11-20 14:57:25 jexi Exp $
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System

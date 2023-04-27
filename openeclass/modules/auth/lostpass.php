@@ -57,6 +57,7 @@ function check_password_editable($password)
 }
 
 if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
+	
 	$userUID = (int)$_REQUEST['u'];
 	$hash = $_REQUEST['h'];
 	$res = db_query("SELECT `user_id`, `hash`, `password`, `datetime` FROM passwd_reset
@@ -68,10 +69,10 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 	if (mysql_num_rows($res) == 1) {
 		$myrow = mysql_fetch_array($res);
 		//copy pass hash (md5) from reset_pass to user table
-		$sql = "UPDATE `user` SET `password` = '".$myrow['hash']."' WHERE `user_id` = ".$myrow['user_id']."";
+		$sql = "UPDATE `user` SET `password` = '".$myrow['hash']."' WHERE `user_id` = ".mysql_escape_string($myrow['user_id'])."";
 		if(db_query($sql, $mysqlMainDb)) {
 			//send email to the user of his new pass (not hashed)
-			$res = db_query("SELECT `email` FROM user WHERE `user_id` = ".$myrow['user_id']."", $mysqlMainDb);
+			$res = db_query("SELECT `email` FROM user WHERE `user_id` = ".mysql_escape_string($myrow['user_id'])."", $mysqlMainDb);
 			$myrow2 = mysql_fetch_array($res);
 			$text = "$langPassEmail1 <em>$myrow[password]</em><br>$langPassEmail2";
 			$tool_content .= "<table width=\"99%\"><tbody>
@@ -112,7 +113,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
         }
 
 	$tool_content .= $lang_pass_intro;
-
+	$token=makeToken();
 	$tool_content .= "<form method=\"post\" action=\"".$REQUEST_URI."\">
 		<table>
 		<thead>
@@ -129,9 +130,11 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 		</table>
 		<br/>
 		<input type=\"submit\" name=\"doit\" value=\"".$lang_pass_submit."\" />
+		<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 	</form>";
 
 } elseif (!isset($_REQUEST['do'])) {
+	checkToken();
 	/***** If valid e-mail address was entered, find user and send email *****/
 	$res = db_query("SELECT user_id, nom, prenom, username, password, statut FROM user
 			WHERE email = '" . mysql_escape_string($email) . "'

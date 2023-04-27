@@ -1,4 +1,7 @@
-<? // $Id: exercise.lib.php,v 1.17 2009-11-12 13:11:07 jexi Exp $
+<? 
+
+die('This is not meant to be used');
+// $Id: exercise.lib.php,v 1.17 2009-11-12 13:11:07 jexi Exp $
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System

@@ -87,6 +87,7 @@ if(isset($forumgo)) {
 	$result = db_query("SELECT forum_id, forum_name, forum_desc, forum_access, forum_moderator, forum_type 
 			FROM forums where cat_id='$cat_id'", $currentCourseID);
 	if ($result and mysql_num_rows($result) > 0) {
+		$token=makeToken();
 		$tool_content .= "<form action=\"$_SERVER[PHP_SELF]?forumgoadd=yes&ctg=$ctg&cat_id=$cat_id\" method=post>
 		<table width=99% class=\"ForumAdmSum\">
 		<tbody>
@@ -119,11 +120,11 @@ if(isset($forumgo)) {
 				</tr>";
 				$i++;
 			}
-			$tool_content .= "</tbody></table></form><br/>";
+			$tool_content .= "<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/></tbody></table></form><br/>";
 		} else {
 			$tool_content .= "\n<p class=\"alert1\">$langNoForumsCat</p>";
 		}
-
+		$token=makeToken();
 		$tool_content .= "
 		<form action=\"$_SERVER[PHP_SELF]?forumgoadd=yes&ctg=$ctg&cat_id=$cat_id\" method=post onsubmit=\"return checkrequired(this,'forum_name');\">
 		<table width=99% class=\"FormData\" align=\"left\">
@@ -149,6 +150,7 @@ if(isset($forumgo)) {
 		<input type=hidden name=cat_id value='$cat_id'>
 		<input type=hidden name=forumgoadd value=yes>
 		<input type=submit value=$langAdd>
+		<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 		</td>
 		</tr></tbody></table>
 		</form>
@@ -162,6 +164,8 @@ if(isset($forumgo)) {
     		cat_id, forum_type FROM forums WHERE forum_id='$forum_id'", $currentCourseID);
 		list($forum_id, $forum_name, $forum_desc, $forum_access, $forum_moderator, $cat_id_1,
 		$forum_type) = mysql_fetch_row($result);
+		
+		$token=makeToken();
 		$tool_content .= "
 		<form action=\"$_SERVER[PHP_SELF]?forumgosave=yes&ctg=$ctg&cat_id=".@$cat_id."\" method=post onsubmit=\"return checkrequired(this,'forum_name');\">
 		<input type=hidden name=forum_id value=$forum_id>
@@ -196,6 +200,7 @@ if(isset($forumgo)) {
 		<th>&nbsp;</th>
 		<td><input type=hidden name=forumgosave value=yes>
 		<input type=submit value='$langSave'>
+		<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 		</td>
 		</tr></thead></table></form>";
 	}
@@ -204,6 +209,7 @@ if(isset($forumgo)) {
 	elseif(isset($forumcatedit)) {
 		$result = db_query("select cat_id, cat_title from catagories where cat_id='$cat_id'", $currentCourseID);
 		list($cat_id, $cat_title) = mysql_fetch_row($result);
+		$token=makeToken();
 		$tool_content .= "
   		<form action='$_SERVER[PHP_SELF]?forumcatsave=yes' method=post onsubmit=\"return checkrequired(this,'cat_title');\">
     		<input type=hidden name=cat_id value=$cat_id>
@@ -218,6 +224,7 @@ if(isset($forumgo)) {
     		<tr>
       		<th>&nbsp;</th>
       		<td><input type=submit value='$langSave'></td>
+			  <input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
     		</tr>
     		</thead>
     		</table>
@@ -226,12 +233,20 @@ if(isset($forumgo)) {
 
 	// save forum category
 	elseif (isset($forumcatsave)) {
+		checkToken();
+		$cat_title = mysql_real_escape_string($cat_title);
 		db_query("update catagories set cat_title='$cat_title' where cat_id='$cat_id'", $currentCourseID);
 		$tool_content .= "\n<p class=\"success_small\">$langNameCatMod<br /><a href=\"$_SERVER[PHP_SELF]?forumadmin=yes\">$langBack</a></p>";
 	}
 
 	// forum go save
 	elseif(isset($forumgosave)) {
+		checkToken();
+		$cat_id = mysql_real_escape_string($cat_id);
+		$forum_moderator = mysql_real_escape_string($forum_moderator);
+		$forum_name = mysql_real_escape_string($forum_name);
+		$forum_type = mysql_real_escape_string($forum_type);
+		$ctg = mysql_real_escape_string($ctg);
 		$nameTools = $langDelete;
 		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
 		$result = @db_query("SELECT user_id FROM users WHERE username='$forum_moderator'", $currentCourseID);
@@ -246,6 +261,8 @@ if(isset($forumgo)) {
 
 	// forum add category
 	elseif(isset($forumcatadd)) {
+		checkToken();
+		$catagories = mysql_real_escape_string($catagories);
 		db_query("INSERT INTO catagories VALUES (NULL, '$catagories', NULL)", $currentCourseID);
 		$tool_content .= "\n<p class='success_small'>$langCatAdded<br />
 		<a href='$_SERVER[PHP_SELF]?forumadmin=yes'>$langBack</a></p>";
@@ -253,6 +270,11 @@ if(isset($forumgo)) {
 
 	// forum go add
 	elseif(isset($forumgoadd)) {
+		checkToken();
+		$forum_moderator = mysql_real_escape_string($forum_moderator);
+		$forum_name = mysql_real_escape_string($forum_name);
+		$forum_desc = mysql_real_escape_string($forum_desc);
+		$forum_type = mysql_real_escape_string($forum_type);
 		$nameTools = $langAdd;
 		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
 		$result = @db_query("SELECT user_id FROM users WHERE username='$forum_moderator'", $currentCourseID);
@@ -267,6 +289,7 @@ if(isset($forumgo)) {
 		// --------------------------------
 		// notify users 
 		// --------------------------------
+		$cours_id = mysql_real_escape_string($cours_id);
 		$subject_notify = "$logo - $langCatNotify";
 		$sql = db_query("SELECT DISTINCT user_id FROM forum_notify 
 				WHERE (cat_id = $cat_id) 
@@ -304,6 +327,7 @@ if(isset($forumgo)) {
 		$tool_content .= "\n<p class=\"success_small\">$langForumDelete<br />
 			<a href=\"$_SERVER[PHP_SELF]?forumgo=yes&ctg=$ctg&cat_id=$cat_id\">$langBack</a></p>";
 	} else {
+		$cours_id = mysql_real_escape_string($cours_id);
 		if(isset($forumcatnotify)) { // modify forum category notification
 			$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
 				WHERE user_id = $uid AND cat_id = $cat_id AND course_id = $cours_id"));
@@ -315,6 +339,7 @@ if(isset($forumgo)) {
 				cat_id = $cat_id, notify_sent = 1, course_id = $cours_id");
 			}
 		}
+		$token=makeToken();
 		$tool_content .= "<form action=\"$_SERVER[PHP_SELF]?forumadmin=yes\" method=post></td><tr><td>";
 		$tool_content .= "<table width=99% class=\"ForumCategory\">
     		<tbody>
@@ -351,7 +376,8 @@ if(isset($forumgo)) {
 			</td></tr>";
 			$i++;
 		}
-		$tool_content .= "</tbody></table></form><br/>
+		$token=makeToken();
+		$tool_content .= "<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/></tbody></table></form><br/>
 		<form action=\"$_SERVER[PHP_SELF]?forumcatadd=yes\" method=post onsubmit=\"return checkrequired(this,'catagories');\">
 		<table width=99% class=\"FormData\" align=\"left\">
 		<tbody><tr>
@@ -364,6 +390,7 @@ if(isset($forumgo)) {
 		</tr>
 		<tr><th>&nbsp;</th>
 		<td><input type=hidden name=forumcatadd value=yes><input type=submit value='$langAdd'></td>
+		<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
 		</tr>
 		</thead>
 		</table></form>
