@@ -46,6 +46,7 @@ if (empty($userdata['email'])) {
 		$tool_content .= sprintf('<p>'.$langNonUserContact.'</p>', $urlServer);
 	}
 } elseif (isset($_POST['content'])) {
+	checkToken();
 	$content = trim($_POST['content']);
 	if (empty($content)) {
 		$tool_content .= "<p>$langEmptyMessage</p>";
@@ -65,6 +66,7 @@ draw($tool_content, 2, 'admin');
 // display form
 function form()
 {
+	$token=makeToken();
   $ret = "
   <form method='post' action='$_SERVER[PHP_SELF]'>
 
@@ -81,6 +83,7 @@ function form()
   <tr>
     <th>&nbsp;</th>
     <td><input type='submit' name='submit' value='$GLOBALS[langSendMessage]' /></td>
+	<input type=\"hidden\" name=\"csrf_token\" value=\"$token\"/>
   </tr>
   </tbody>
   </table>

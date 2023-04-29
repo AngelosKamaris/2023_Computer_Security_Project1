@@ -1,4 +1,6 @@
 <?php 
+
+die('This is not meant to be used');
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System
@@ -46,10 +48,10 @@ if($is_adminOfCourse)
 		if (($file_name != "") && ($file_size <= "$size" )) {
 
 		$file_name = str_replace(" ", "", $file_name);
-		$file_name = str_replace("é", "e", $file_name);
-		$file_name = str_replace("è", "e", $file_name);
-		$file_name = str_replace("ê", "e", $file_name);
-		$file_name = str_replace("à", "a", $file_name);
+		$file_name = str_replace("ï¿½", "e", $file_name);
+		$file_name = str_replace("ï¿½", "e", $file_name);
+		$file_name = str_replace("ï¿½", "e", $file_name);
+		$file_name = str_replace("ï¿½", "a", $file_name);
 
 		@copy("$file", "$updir/$file_name")
 		or die("<p>$langCouldNot</p></tr>");
