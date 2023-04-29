@@ -93,7 +93,7 @@ class Dropbox_Work {
 			include "include/not_installed.php";
 		}
 		mysqli_query($mysqli,"SET NAMES utf8");
-		var_dump($mysqli);
+		
 		
 		/*
 		* Do some sanity checks

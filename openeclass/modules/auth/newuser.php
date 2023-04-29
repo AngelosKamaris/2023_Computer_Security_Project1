@@ -51,7 +51,7 @@ if ($mysqli->connect_errno) {
     include "include/not_installed.php";
 }
 mysqli_query($mysqli,"SET NAMES utf8");
-var_dump($mysqli);
+
 $tool_content = "";	// Initialise $tool_content
 
 if (isset($close_user_registration) and $close_user_registration == TRUE) {
@@ -230,7 +230,7 @@ if (!isset($submit)) {
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
     (user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
     VALUES (NULL, ?, ?, ?, ?, ?, 5, ?, ?, ?, ?, ?)";
-	echo "<br> query is:". $q1;
+	
 
 	$stmt = mysqli_prepare($mysqli, $q1);
 	mysqli_stmt_bind_param($stmt, 'ssssssssss', $nom_form, $prenom_form, $uname, $password_encrypted, $email, $department, $am, $registered_at, $expires_at, $lang);
