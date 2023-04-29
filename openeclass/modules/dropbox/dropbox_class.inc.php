@@ -553,5 +553,4 @@ class Dropbox_Person {
 		removeUnusedFiles();	//check for unused files
 	}
 }
-
 ?>

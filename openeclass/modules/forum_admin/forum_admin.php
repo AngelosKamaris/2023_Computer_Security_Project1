@@ -291,8 +291,6 @@ if(isset($forumgo)) {
 		$forum_desc = mysql_real_escape_string($forum_desc);
 		$forum_type = mysql_real_escape_string($forum_type);
 		$forum_moderator= htmlentities($forum_moderator, ENT_COMPAT, "UTF-8");
-		// $forum_name= htmlentities($forum_name);
-		//htmlentities on forum_name with utf8 encoding
 		$forum_name= htmlentities($forum_name, ENT_COMPAT, "UTF-8");
 		$forum_type= htmlentities($forum_type, ENT_COMPAT, "UTF-8");
 		$forum_desc= htmlentities($forum_desc, ENT_COMPAT, "UTF-8");

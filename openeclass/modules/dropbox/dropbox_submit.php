@@ -208,7 +208,26 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 			{
 				move_uploaded_file($dropbox_filetmpname, $dropbox_cnf["sysPath"] . '/' . $dropbox_filename)
 				or die($dropbox_lang["uploadError"]);
-				new Dropbox_SentWork($uid, $dropbox_title, $_POST['description'], $_POST['authors'], $dropbox_filename, $dropbox_filesize, $newWorkRecipients);
+				
+				
+				echo $dropbox_cnf["sysPath"] . '/' . $dropbox_filename;
+				//create a PCL zip in the path
+				include "../../include/pclzip/pclzip.lib.php";
+				//get filename without the extension
+				$tmpfnm=$dropbox_filename;
+				$dropbox_filename=pathinfo($dropbox_filename, PATHINFO_FILENAME);
+			
+				$zip = new PclZip($dropbox_cnf["sysPath"] . '/' . $dropbox_filename . '.zip');
+				$v_list = $zip->create($dropbox_cnf["sysPath"] . '/' . $tmpfnm, PCLZIP_OPT_REMOVE_PATH, $dropbox_cnf["sysPath"]);
+				if ($v_list == 0) {
+					die($dropbox_lang["zipError"]);
+				}
+				//delete the original file
+				unlink($dropbox_cnf["sysPath"] . '/' . tmpfnm);
+				$new_file_size=filesize($dropbox_cnf["sysPath"] . '/' . $dropbox_filename.'.zip');
+				echo "size is $new_file_size";
+			
+				new Dropbox_SentWork($uid, $dropbox_title, $_POST['description'], $_POST['authors'], $dropbox_filename.'.zip', $new_file_size, $newWorkRecipients);
 			}
 		}
 		chdir ($cwd);
