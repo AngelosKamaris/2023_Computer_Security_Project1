@@ -163,19 +163,19 @@ if (isset($submit) && $submit) {
 		$message = bbencode($message, $is_html_disabled);
 	}
 	$poster_ip=mysql_real_escape_string($poster_ip);
-	$nom=mysql_real_escape_string($nom);
-	$prenom=mysql_real_escape_string($prenom);
+	$tnom=mysql_real_escape_string($nom);
+	$tprenom=mysql_real_escape_string($prenom);
 	$message = format_message($message);
 	$time = date("Y-m-d H:i");
-	$nom = addslashes($nom);
-	$prenom = addslashes($prenom);
+	$tnom = addslashes($tnom);
+	$tprenom = addslashes($tprenom);
 
 	//to prevent [addsig] from getting in the way, let's put the sig insert down here.
 	if (isset($sig) && $sig) {
 		$message .= "\n[addsig]";
 	}
 	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
-			VALUES ('$topic', '$forum', '$uid','$time', '$poster_ip', '$nom', '$prenom')";
+			VALUES ('$topic', '$forum', '$uid','$time', '$poster_ip', '$tnom', '$tprenom')";
 	$result = db_query($sql, $currentCourseID);
 	$this_post = mysql_insert_id();
 	if ($this_post) {

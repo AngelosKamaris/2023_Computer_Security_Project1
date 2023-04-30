@@ -138,27 +138,27 @@ if (isset($submit) && $submit) {
 	$subject=mysql_real_escape_string($subject);
 	$uid=mysql_real_escape_string($uid);
 	$forum=mysql_real_escape_string($forum);
-	$nom=mysql_real_escape_string($nom);
-	$prenom=mysql_real_escape_string($prenom);
+	$tnom=mysql_real_escape_string($nom);
+	$tprenom=mysql_real_escape_string($prenom);
 	$topic_id=mysql_real_escape_string($topic_id);
 	$message = format_message($message);
 	$subject = strip_tags($subject);
 	$poster_ip = $REMOTE_ADDR;
 	$poster_ip=mysql_real_escape_string($poster_ip);
 	$time = date("Y-m-d H:i");
-	$nom = addslashes($nom);
-	$prenom = addslashes($prenom);
+	$tnom = addslashes($tnom);
+	$tprenom = addslashes($tprenom);
 
 	if (isset($sig) && $sig) {
 		$message .= "\n[addsig]";
 	}
 	$sql = "INSERT INTO topics (topic_title, topic_poster, forum_id, topic_time, topic_notify, nom, prenom)
-			VALUES (" . autoquote($subject) . ", '$uid', '$forum', '$time', 1, '$nom', '$prenom')";
+			VALUES (" . autoquote($subject) . ", '$uid', '$forum', '$time', 1, '$tnom', '$tprenom')";
 	$result = db_query($sql, $currentCourseID);
 
 	$topic_id = mysql_insert_id();
 	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
-			VALUES ('$topic_id', '$forum', '$uid', '$time', '$poster_ip', '$nom', '$prenom')";
+			VALUES ('$topic_id', '$forum', '$uid', '$time', '$poster_ip', '$tnom', '$tprenom')";
 	if (!$result = db_query($sql, $currentCourseID)) {
 		$tool_content .= $langErrorEnterPost;
 		draw($tool_content, 2, 'phpbb', $head_content);
