@@ -41,6 +41,8 @@ $navigation[]= array ("url"=>"../phpbb/index.php", "name"=> $langForums);
 $tool_content = $head_content = "";
 $forum_id = htmlentities(intval(@$_REQUEST['forum_id']), ENT_COMPAT, "UTF-8");
 $cat_id = htmlentities(intval(@$_REQUEST['cat_id']), ENT_COMPAT, "UTF-8");
+$ctg = mysql_real_escape_string($ctg);
+$ctg=htmlentities($ctg, ENT_COMPAT, "UTF-8");
 if($is_adminOfCourse) {
 
 $head_content .= '
