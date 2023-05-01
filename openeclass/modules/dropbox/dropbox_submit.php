@@ -82,7 +82,7 @@ if ($mysqli->connect_errno) {
     include "include/not_installed.php";
 }
 mysqli_query($mysqli,"SET NAMES utf8");
-
+var_dump($mysqli);
 
 /*
  * ========================================
@@ -229,11 +229,10 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 				unlink($dropbox_cnf["sysPath"] . '/' . tmpfnm);
 				$new_file_size=filesize($dropbox_cnf["sysPath"] . '/' . $dropbox_filename.'.zip');
 				echo "size is $new_file_size";
-				$descrpt=htmlentities($_POST['description'], ENT_QUOTES, 'UTF-8');
+				$desc=htmlentities($_POST['description'], ENT_QUOTES, 'UTF-8');
 				$auth=htmlentities($_POST['authors'], ENT_QUOTES, 'UTF-8');
-				$rec=htmlentities($_POST['recipients'], ENT_QUOTES, 'UTF-8');
 			
-				new Dropbox_SentWork($uid, $dropbox_title, $descrpt, $auth, $dropbox_filename.'.zip', $new_file_size, $rec);
+				new Dropbox_SentWork($uid, $dropbox_title, $desc, $auth, $dropbox_filename.'.zip', $new_file_size, $newWorkRecipients);
 			}
 		}
 		chdir ($cwd);
