@@ -163,6 +163,9 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 		$dropbox_filetype = $_FILES['file']['type'];
 		$dropbox_filetmpname = $_FILES['file']['tmp_name'];
 
+		$dropbox_filename = htmlentities($dropbox_filename, ENT_QUOTES, 'UTF-8');
+		$dropbox_filetmpname = htmlentities($dropbox_filetmpname, ENT_QUOTES, 'UTF-8');
+
 		if ($dropbox_filesize + $dropbox_space > $diskQuotaDropbox)
 		{
 			$errormsg = $dropbox_lang["quotaError"];
@@ -226,8 +229,11 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 				unlink($dropbox_cnf["sysPath"] . '/' . tmpfnm);
 				$new_file_size=filesize($dropbox_cnf["sysPath"] . '/' . $dropbox_filename.'.zip');
 				echo "size is $new_file_size";
+				$descrpt=htmlentities($_POST['description'], ENT_QUOTES, 'UTF-8');
+				$auth=htmlentities($_POST['authors'], ENT_QUOTES, 'UTF-8');
+				$rec=htmlentities($_POST['recipients'], ENT_QUOTES, 'UTF-8');
 			
-				new Dropbox_SentWork($uid, $dropbox_title, $_POST['description'], $_POST['authors'], $dropbox_filename.'.zip', $new_file_size, $newWorkRecipients);
+				new Dropbox_SentWork($uid, $dropbox_title, $descrpt, $auth, $dropbox_filename.'.zip', $new_file_size, $rec);
 			}
 		}
 		chdir ($cwd);
