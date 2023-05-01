@@ -51,7 +51,7 @@ if ($mysqli->connect_errno) {
     include "include/not_installed.php";
 }
 mysqli_query($mysqli,"SET NAMES utf8");
-var_dump($mysqli);
+
 
 
 if (isset($submit) && isset($changePass) && ($changePass == "do")) {

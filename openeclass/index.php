@@ -9,7 +9,6 @@ session_set_cookie_params(
     $cookieParams['httponly']
 );
 session_start();
-echo "here<br>";
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System
@@ -73,7 +72,6 @@ if ($mysqli->connect_errno) {
     include "include/not_installed.php";
 }
 mysqli_query($mysqli,"SET NAMES utf8");
-var_dump($mysqli);
 
 // unset system that records visitor only once by course for statistics
 include('include/action.php');
@@ -138,7 +136,6 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 			$auth_allow = 4;
 		} else {
 			while ($myrow = mysqli_fetch_array($result)) {
-				var_dump($myrow);
 				$exists = 1;
 				if(!empty($auth)) {
 					if(!in_array($myrow["password"],$check_passwords)) {
@@ -172,7 +169,6 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 					break;
 			}
 		} else {
-			echo"<br>here";
 			$warning = '';
 			$log='yes';
 			$_SESSION['nom'] = $nom;

@@ -47,7 +47,7 @@ if ($mysqli->connect_errno) {
     include "include/not_installed.php";
 }
 mysqli_query($mysqli,"SET NAMES utf8");
-var_dump($mysqli);
+
 
 
 
@@ -336,10 +336,7 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
     </tr>";
 	}
 	##[END personalisation modification]############
-	echo "<br>here<br>";
 	$token = makeToken();
-	echo "<br>here<br>";
-	echo $token;
 	$tool_content .= "
     <tr>
       <th class='left'>$langLanguage</th>
