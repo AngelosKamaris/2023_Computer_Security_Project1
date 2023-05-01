@@ -92,7 +92,7 @@ $sql = "SELECT f.forum_type, f.forum_name
 $result = db_query($sql, $currentCourseID);
 $myrow = mysql_fetch_array($result);
  
-$forum_name = own_stripslashes(htmlentities($myrow["forum_name"]));
+$forum_name = own_stripslashes(htmlentities($myrow["forum_name"], ENT_COMPAT, "UTF-8"));
 $nameTools = $forum_name;
 
 $topic_count = mysql_fetch_row(db_query("SELECT COUNT(*) FROM topics WHERE forum_id = '$forum'"));
