@@ -348,7 +348,7 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 
 				$t->set_var ( 'BREAD_HREF_FRONT', '<a href="{BREAD_LINK}">' );
 				$t->set_var ( 'BREAD_LINK', $step ["url"] );
-				$t->set_var ( 'BREAD_TEXT', $step ["name"] );
+				$t->set_var ( 'BREAD_TEXT', htmlentities($step ["name"], ENT_COMPAT, "UTF-8") );
 				$t->set_var ( 'BREAD_ARROW', '&#187;' );
 				$t->set_var ( 'BREAD_HREF_END', '</a>' );
 				$t->parse ( 'breadCrumbStart', 'breadCrumbStartBlock', true );
@@ -362,7 +362,7 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 		if (isset ( $page_name ) && ! $homePage) {
 
 			$t->set_var ( 'BREAD_HREF_FRONT', '' );
-			$t->set_var ( 'BREAD_TEXT', $page_name );
+			$t->set_var ( 'BREAD_TEXT', htmlentities($page_name, ENT_COMPAT, "UTF-8") );
 			$t->set_var ( 'BREAD_ARROW', '&#187;' );
 			$t->set_var ( 'BREAD_HREF_END', '' );
 

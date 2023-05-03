@@ -292,10 +292,7 @@ if(isset($forumgo)) {
 		$forum_name = mysql_real_escape_string($forum_name);
 		$forum_desc = mysql_real_escape_string($forum_desc);
 		$forum_type = mysql_real_escape_string($forum_type);
-		$forum_moderator= htmlentities($forum_moderator, ENT_COMPAT, "UTF-8");
-		$forum_name= htmlentities($forum_name, ENT_COMPAT, "UTF-8");
-		$forum_type= htmlentities($forum_type, ENT_COMPAT, "UTF-8");
-		$forum_desc= htmlentities($forum_desc, ENT_COMPAT, "UTF-8");
+		
 		$nameTools = $langAdd;
 		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
 		$result = @db_query("SELECT user_id FROM users WHERE username='$forum_moderator'", $currentCourseID);
@@ -307,6 +304,10 @@ if(isset($forumgo)) {
 		while ($my_forum_id = mysql_fetch_array($idforum)) {
 			$forid=$my_forum_id[0];
 		}
+		$forum_moderator= htmlentities($forum_moderator, ENT_COMPAT, "UTF-8");
+		$forum_name= htmlentities($forum_name, ENT_COMPAT, "UTF-8");
+		$forum_type= htmlentities($forum_type, ENT_COMPAT, "UTF-8");
+		$forum_desc= htmlentities($forum_desc, ENT_COMPAT, "UTF-8");
 		// --------------------------------
 		// notify users 
 		// --------------------------------
