@@ -1,4 +1,5 @@
 <?php
+die('This is not meant to be used');
 
 // **************************************
 // old queries

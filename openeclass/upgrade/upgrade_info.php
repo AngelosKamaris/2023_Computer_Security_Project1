@@ -1,4 +1,5 @@
 <?php header('Content-Type: text/html; charset=UTF-8');
+die('This is not meant to be used');
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
