@@ -64,6 +64,10 @@ $lang = langname_to_code($language);
 
 // display form
 if (!isset($submit)) {
+	$nom_form=htmlentities($nom_form,ENT_QUOTES,'UTF-8');
+	$prenom_form=htmlentities($prenom_form,ENT_QUOTES,'UTF-8');
+	$uname=htmlentities($uname,ENT_QUOTES,'UTF-8');
+	$am=htmlentities($am,ENT_QUOTES,'UTF-8');
 	// Main body
 	@$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
 	<table width='99%' style='border: 1px solid #edecdf;'>
