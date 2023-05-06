@@ -41,6 +41,9 @@
 include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
 include 'auth.inc.php';
+$nom_form=htmlentities($_POST['nom_form'],ENT_QUOTES,'UTF-8');
+$prenom_form=htmlentities($_POST['prenom_form'],ENT_QUOTES,'UTF-8');
+$uname=htmlentities($_POST['uname'],ENT_QUOTES,'UTF-8');
 $nameTools = $langUserDetails;
 // Main body
 $navigation[] = array("url"=>"registration.php", "name"=> $langNewUser);
