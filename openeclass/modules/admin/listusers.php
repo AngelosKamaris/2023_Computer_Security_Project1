@@ -116,7 +116,7 @@ $criteria = 0;
 // surname search
 if(!empty($user_surname))
 {
-	$user_surname_qry = " nom LIKE '".$user_surname."%'";
+	$user_surname_qry = " nom LIKE '".mysql_real_escape_string($user_surname)."%'";
 	$criteria++;
 }
 else
@@ -136,7 +136,7 @@ if(!empty($user_firstname))
 		$user_firstname_qry = "";
 	}
 	$criteria++;
-	$user_firstname_qry .= " prenom LIKE '".$user_firstname."%'";
+	$user_firstname_qry .= " prenom LIKE '".mysql_real_escape_string($user_firstname)."%'";
 }
 else
 {
@@ -155,7 +155,7 @@ if(!empty($user_username))
 		$user_username_qry = "";
 	}
 	$criteria++;
-	$user_username_qry .= " username LIKE '".$user_username."%'";
+	$user_username_qry .= " username LIKE '".mysql_real_escape_string($user_username)."%'";
 }
 else
 {
@@ -174,7 +174,7 @@ if(!empty($user_am))
 		$user_am_qry = "";
 	}
 	$criteria++;
-	$user_am_qry .= " am='".$user_am."'";
+	$user_am_qry .= " am='".mysql_real_escape_string($user_am)."'";
 }
 else
 {
@@ -193,7 +193,7 @@ if(!empty($user_type))
 		$user_type_qry = "";
 	}
 	$criteria++;
-	$user_type_qry .= " statut=".$user_type;
+	$user_type_qry .= " statut=".mysql_real_escape_string($user_type);
 }
 else
 {
@@ -213,7 +213,7 @@ if(!empty($user_email))
 		$user_email_qry = "";
 	}
 	$criteria++;
-	$user_email_qry .= " email LIKE '".$user_email."%'";
+	$user_email_qry .= " email LIKE '".mysql_real_escape_string($user_email)."%'";
 }
 else
 {
@@ -241,7 +241,7 @@ if(!empty($user_registered_at_flag))
 	}
 	if(!empty($user_registered_at))
 	{
-		$user_registered_at_qry .= $user_registered_at;
+		$user_registered_at_qry .= mysql_real_escape_string($user_registered_at);
 	}
 	else
 	{
@@ -569,31 +569,31 @@ function keep_var() {
 			$retstring .= "<input type = 'hidden' name='c' value='$c'>";
 	} else  {
 		if (isset($_REQUEST['user_surname'])) {
-			$user_surname = $_REQUEST['user_surname'];
+			$user_surname = mysql_real_escape_string($_REQUEST['user_surname']);
 			$retstring .= "<input type = 'hidden' name='user_surname' value='$user_surname'>";
 		} 
 		if (isset($_REQUEST['user_firstname'])) {
-			$user_firstname = $_REQUEST['user_firstname'];
+			$user_firstname = mysql_real_escape_string($_REQUEST['user_firstname']);
 			$retstring .= "<input type='hidden' name='user_firstname' value='$user_firstname'>";
 		}
 		if (isset($_REQUEST['user_username'])) {
-			$user_username = $_REQUEST['user_username'];
+			$user_username = mysql_real_escape_string($_REQUEST['user_username']);
 			$retstring .= "<input type='hidden' name='user_username' value = '$user_username'>";
 		}
 		if (isset($_REQUEST['user_am'])) {
-			$user_am = $_REQUEST['user_am']; 
+			$user_am = mysql_real_escape_string($_REQUEST['user_am']); 
 			$retstring .= "<input type='hidden' name='user_am' value = '$user_am'>";
 		}
 		if (isset($_REQUEST['user_type'])) {
-			$user_type = $_REQUEST['user_type'];
+			$user_type = mysql_real_escape_string($_REQUEST['user_type']);
 			$retstring .= "<input type='hidden' name='user_type' value='$user_type'>";
 		}
 		if (isset($_REQUEST['user_email'])) {
-			$user_email = $_REQUEST['user_email'];
+			$user_email = mysql_real_escape_string($_REQUEST['user_email']);
 			$retstring .= "<input type='hidden' name='user_email' value='$user_email'>";
 		}
 		if (isset($_REQUEST['user_registered_at_flag'])) {
-			$user_registered_at_flag = $_REQUEST['user_registered_at_flag'];
+			$user_registered_at_flag = mysql_real_escape_string($_REQUEST['user_registered_at_flag']);
 			$retstring .= "<input type='hidden' name='user_registered_at_flag' value='$user_registered_at_flag'>";
 		}
 	}

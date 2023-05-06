@@ -225,6 +225,7 @@ if ($total_categories) {
 				$total_posts = $forum_row[$x]["forum_posts"];
 				$total_topics = $forum_row[$x]["forum_topics"];
 				$desc = stripslashes($forum_row[$x]["forum_desc"]);
+				$desc= htmlentities($desc, ENT_QUOTES, 'UTF-8');
 				$tool_content .= "<td>";
 				$forum = $forum_row[$x]["forum_id"];
 				if ($is_adminOfCourse) { // admin

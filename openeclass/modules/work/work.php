@@ -152,8 +152,10 @@ if ($is_adminOfCourse) {
 		$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 		submit_grades($grades_id, $grades);
 	} elseif (isset($id)) {
+		$id=mysql_real_escape_string($id);
+		$id=htmlentities($id,ENT_QUOTES,'UTF-8');
 		if (isset($choice)) {
-			$id=mysql_real_escape_string($id);
+
 			if ($choice == 'disable') {
 				db_query("UPDATE assignments SET active = '0' WHERE id = '$id'");
 				show_assignments($langAssignmentDeactivated);
@@ -190,6 +192,8 @@ if ($is_adminOfCourse) {
 	}
 } else {
 	if (isset($id)) {
+		$id=mysql_real_escape_string($id);
+		$id=htmlentities($id,ENT_QUOTES,'UTF-8');
 		if (isset($work_submit)) {
 			checkToken();
 			$nameTools = $m['SubmissionStatusWorkInfo'];
