@@ -241,6 +241,7 @@ if ($is_adminOfCourse){
 	//--add external link
 
 	if(isset($submit) &&  @$action == 2) {
+		die('This is not meant to be used');
 		checkToken();
 		if (($link == "http://") or ($link == "ftp://") or empty($link) or empty($name_link))  {
 			$tool_content .= "<p class=\"caution_small\">$langInvalidLink<br /><a href=\"$_SERVER[PHP_SELF]?action=2\">$langHome</a></p><br />";
@@ -276,6 +277,7 @@ if ($is_adminOfCourse){
 // -------------------------
 
 	if(isset($submit) &&  @$action == 1){
+		die('This is not meant to be used');
 		checkToken();
 		$updir = "$webDir/courses/$currentCourseID/page/"; //path to upload directory
 		$size = "20971520"; //file size is 20M (1024x1024x20)
