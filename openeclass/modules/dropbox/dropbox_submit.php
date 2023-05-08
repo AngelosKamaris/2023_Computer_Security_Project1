@@ -211,9 +211,6 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 			{
 				move_uploaded_file($dropbox_filetmpname, $dropbox_cnf["sysPath"] . '/' . $dropbox_filename)
 				or die($dropbox_lang["uploadError"]);
-				
-				
-				echo $dropbox_cnf["sysPath"] . '/' . $dropbox_filename;
 				//create a PCL zip in the path
 				include "../../include/pclzip/pclzip.lib.php";
 				//get filename without the extension
@@ -228,7 +225,6 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 				//delete the original file
 				unlink($dropbox_cnf["sysPath"] . '/' . tmpfnm);
 				$new_file_size=filesize($dropbox_cnf["sysPath"] . '/' . $dropbox_filename.'.zip');
-				echo "size is $new_file_size";
 				$desc=htmlentities($_POST['description'], ENT_QUOTES, 'UTF-8');
 				$auth=htmlentities($_POST['authors'], ENT_QUOTES, 'UTF-8');
 			

@@ -66,6 +66,8 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 	$username_form = mysql_real_escape_string(htmlspecialchars($username_form));
 	$nom_form =mysql_real_escape_string(htmlspecialchars($nom_form));
 	$prenom_form =mysql_real_escape_string(htmlspecialchars($prenom_form));
+	$email_form =mysql_real_escape_string(htmlspecialchars($email_form));
+	$am_form =mysql_real_escape_string(htmlspecialchars($am_form));
 
 
 	$stmt = $mysqli->prepare("SELECT username FROM `{$mysqlMainDb}`.user WHERE username = ?");
