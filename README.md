@@ -87,10 +87,11 @@ sql στην αρχή χρησιμοποιεί ``` mysql_query('SET NAMES utf8')
 
 Πριν απο αυτές τις αλλαγές υπήρχαν μεταξύ άλλων κάποια απο τα παρακάτω attacks :
 
-- O χρήστης έκανε edit το profile του και έβαζα Nom ή Prenom <scirpt> alert(1) </script> 
-- O χρήστης ανέβαζε εργασία και στην περιγραφή της έβαζε  <scirpt> alert(1) </script> 
-- Ο χρήστης έστλενε μύνημα στην τηλεργασία  <scirpt> alert(1) </script> 
-- Ο χρήστης μέσω της ανταλλαγής αρχείων έστελνε αρχείο στον admin και στην περιγραφή έβαζε <scirpt> alert(1) </script> 
+ O χρήστης έκανε edit το profile του και έβαζα Nom ή Prenom <scirpt> alert(1) </script>  <br />
+ O χρήστης ανέβαζε εργασία και στην περιγραφή της έβαζε  <scirpt> alert(1) </script>  <br />
+Ο χρήστης έστλενε μύνημα στην τηλεργασία  <scirpt> alert(1) </script>  <br />
+Ο χρήστης μέσω της ανταλλαγής αρχείων έστελνε αρχείο στον admin και στην περιγραφή έβαζε <scirpt> alert(1) </script>  <br />
+<br />
 
 - File injections : 
  Τα 3 βασικά μέρη που έκαναν το site ευάλωτο σε file injections ήταν : Oι εργασίες , Η ανταλαγή αρχείων , Τα μη προστατευμένα links του server . 
