@@ -69,7 +69,7 @@ sql στην αρχή χρησιμοποιεί ``` mysql_query('SET NAMES utf8')
   
   
   
- XSS :
+- XSS ATTACKS :
 Γενικά στα περισσότερα σημεία που υπήρχε user input έπρεπε εφαρμοστούν φίλτρα διότι υπήρχαν αρκετά vulerabilities π.χ αν ο χρήστης διάλεγε να κάνει edit το profile του  και έβαζε στο surname <script> alert(1) </script> εμφανιζόταν μύνημα έπειτα απο την αλλαγή στοιχείων . Επίσης xss attacks γινόντουσαν και απο links  όπως :
 http://localhost:8001/modules/profile/profile.php/"><script>alert(1)</script>
 http://localhost:8001/modules/work/work.php?id='--<script>alert(1)</script>
@@ -89,7 +89,7 @@ http://localhost:8001/modules/phpbb/reply.php?topic=2&forum=1&message=<script>al
 - Ο χρήστης μέσω της ανταλλαγής αρχείων έστελνε αρχείο στον admin και στην περιγραφή έβαζε <scirpt> alert(1) </script> 
 
 
-File injections : 
+- File injections : 
 Τα 3 βασικά μέρη που έκαναν το site ευάλωτο σε file injections ήταν : Oι εργασίες , Η ανταλαγή αρχείων , Τα μη προστατευμένα links του server . 
 Το site ήταν ευάλωτο στο εξής attack :
  Ανέβασμα εργασίας ή αρχείου για ανταλλαγή 
