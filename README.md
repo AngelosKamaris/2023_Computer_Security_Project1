@@ -70,15 +70,15 @@ sql στην αρχή χρησιμοποιεί ``` mysql_query('SET NAMES utf8')
   
   
 - XSS ATTACKS :
-Γενικά στα περισσότερα σημεία που υπήρχε user input έπρεπε εφαρμοστούν φίλτρα διότι υπήρχαν αρκετά vulerabilities π.χ αν ο χρήστης διάλεγε να κάνει edit το profile του  και έβαζε στο surname <script> alert(1) </script> εμφανιζόταν μύνημα έπειτα απο την αλλαγή στοιχείων . Επίσης xss attacks γινόντουσαν και απο links  όπως :
+Γενικά στα περισσότερα σημεία που υπήρχε user input έπρεπε εφαρμοστούν φίλτρα διότι υπήρχαν αρκετά vulerabilities π.χ αν ο χρήστης διάλεγε να κάνει edit το profile του  και έβαζε στο surname <script> alert(1) </script> εμφανιζόταν μύνημα έπειτα απο την αλλαγή στοιχείων . Επίσης xss attacks γινόντουσαν και απο links  όπως : <br />
 
-	http://localhost:8001/modules/profile/profile.php/"><script>alert(1)</script>
+	http://localhost:8001/modules/profile/profile.php/"><script>alert(1)</script> <br />
 
-	http://localhost:8001/modules/work/work.php?id='--<script>alert(1)</script>
+	http://localhost:8001/modules/work/work.php?id='--<script>alert(1)</script> <br />
 
-	http://localhost:8001/index.php/%27"/><script>alert(1)</script>
+	http://localhost:8001/index.php/%27"/><script>alert(1)</script>  <br />
 
-	http://localhost:8001/modules/phpbb/reply.php?topic=2&forum=1&message=<script>alert(1)</script>&submit=Yποβολή
+	http://localhost:8001/modules/phpbb/reply.php?topic=2&forum=1&message=<script>alert(1)</script>&submit=Yποβολή <br />
 
 Και άλλα πολλά σε σχεδόν όποιο σημείο είχε user input που άλλαζε απο link . Αρκετά xss attacks είναι αρκετά παρόμοια και με αυτά που αναφέρονται στο csrf section
 
