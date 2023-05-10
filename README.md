@@ -67,6 +67,56 @@ sql στην αρχή χρησιμοποιεί ``` mysql_query('SET NAMES utf8')
   Για την καταπολέμηση αυτού του θέματος, δημιούργησα το αρχείο:  ``` openeclass\include\csrf_func.php ```, το οποίο και κάνω include στο αρχείο ```openeclass\include\baseTheme.php ```, στην γραμμή 51, ώστε να είναι σε όλες μου τις σελίδες. Αυτό το αρχείο έχει 2 συναρτήσεις, την: makeToken(), η οποία ελέγχει αν υπάρχει ήδη token και αν δεν υπάρχει το δημιουργεί και το αποθηκεύει στο SESSION, και την:  checkToken(): η οποία ελέγχει αν υπάρχει token στο post ή στο request και είναι ίδιο με αυτό στο session αλλιώς σβήνει το token που υπάρχει αυτή την στιγμή στο session (σε περίπτωση που κάποιος το αντιγράψει) και εμφανίζει μύνημα λάθους στον χρήστη.
 Αυτές οι 2 συναρτήσεις χρησιμοποιούνται στις φόρμες αλλά και σε μερικά urls, έτσι ώστε να βεβαιωθούμε ότι ο χρήστης που μπαίνει σε μια σελίδα, δεν μπαίνει με redirect. Αυτό το επιτυγχάνουμε στις φόρμες προσθέτοντας το token σαν hidden input, ενώ στα urls πρόσθεσα μια μεταβλητή σε αυτά που έχει το token. Τέλος κάτι επιπλέον που έκανα, σε περίπτωση που κάποιος αποπειραθεί να αντιγράψει το session id, έβαλα στο ``` openeclass\index.php ``` την παράμετρο στο cookie, να μην μπορεί να εμφανιστεί το document.cookie.
   
+  
+  
+- XSS ATTACKS :
+Γενικά στα περισσότερα σημεία που υπήρχε user input έπρεπε εφαρμοστούν φίλτρα διότι υπήρχαν αρκετά vulerabilities π.χ αν ο χρήστης διάλεγε να κάνει edit το profile του  και έβαζε στο surname <script> alert(1) </script> εμφανιζόταν μύνημα έπειτα απο την αλλαγή στοιχείων . Επίσης xss attacks γινόντουσαν και απο links  όπως : <br />
+
+	http://localhost:8001/modules/profile/profile.php/"><script>alert(1)</script> <br />
+
+	http://localhost:8001/modules/work/work.php?id='--<script>alert(1)</script> <br />
+
+	http://localhost:8001/index.php/%27"/><script>alert(1)</script>  <br />
+
+	http://localhost:8001/modules/phpbb/reply.php?topic=2&forum=1&message=<script>alert(1)</script>&submit=Yποβολή <br />
+
+Και άλλα πολλά σε σχεδόν όποιο σημείο είχε user input που άλλαζε απο link . Αρκετά xss attacks είναι αρκετά παρόμοια και με αυτά που αναφέρονται στο csrf section
+
+Για την ασφάλιση της ιστοσελίδας στον τομέα αυτό χρησημοποιήθηκε η συνάρτηση htmlentities που απαλοίφει τους χαρακτήρες
+που μπορούν να χρησιμοποιηθούν για να εκτελέσουν κάποιο scrit στην σελίδα. Κάποια κομμάτια που χρειαζόντουσαν αρκετό patchaρισμα για xss attacks ηταν : profile.php , viewforum.php , work.php ,forum_admin.php ,Basetheme.php ,MessageList.php και άλλα . 
+
+Πριν απο αυτές τις αλλαγές υπήρχαν μεταξύ άλλων κάποια απο τα παρακάτω attacks :
+
+ O χρήστης έκανε edit το profile του και έβαζα Nom ή Prenom <scirpt> alert(1) </script>  <br />
+ O χρήστης ανέβαζε εργασία και στην περιγραφή της έβαζε  <scirpt> alert(1) </script>  <br />
+Ο χρήστης έστλενε μύνημα στην τηλεργασία  <scirpt> alert(1) </script>  <br />
+Ο χρήστης μέσω της ανταλλαγής αρχείων έστελνε αρχείο στον admin και στην περιγραφή έβαζε <scirpt> alert(1) </script>  <br />
+<br />
+
+- File injections : 
+ Τα 3 βασικά μέρη που έκαναν το site ευάλωτο σε file injections ήταν : Oι εργασίες , Η ανταλαγή αρχείων , Τα μη προστατευμένα links του server . 
+ Το site ήταν ευάλωτο στο εξής attack :
+ Ανέβασμα εργασίας ή αρχείου για ανταλλαγή 
+ Eύρεση path του αρχείου κάνοντας προσπέλαση σε Link όπως http://localhost:8001/include/ το οποίο μετέφερε τον χρήστη σε σελίδα που φενόταν το filesystem του   server . 
+ Εκτέλεση του αρχείου απο το path.
+ Το αρχείο ήταν ένα php αρχείο το οποίο είτε έκανε unlink το root με την χρήση της εντολής unlink είτε διάβαζε τα αρχεία ρυθμίσεων (γνωρίζοντας το path)    βλέποντας έτσι τον κωδικό της βάσης δεδομένων 
+
+ Για να προστατευτόυμε απο τέτοιου είδους attacks έγιναν οι εξής αλλαγές .
+ Τα αρχεία αποθηκεύονται στο filesystem σε zips και δίονται για download σε μορφή zip με την χρήση της προεγκατεστημένης στο vanilla eclass βιβλιοθήκης PCLZIP . (work.php ,dropbox_submit.php ,dropbox_download.php)
+
+ Στον φάκελο cong στο 000-default.conf προσθέθηκε ο εξής κανόνας ο οποίος απαγορεύει την προβολή σελιδών του site χωρίς Index
+
+ 	<Directory /var/www/openeclass>
+
+        Options -Indexes +FollowSymLinks
+
+        AllowOverride None
+
+        Require all granted
+
+	</Directory>
+
+  
 
 Συμπληρώστε εδώ __ένα report__ που
 - Να εξηγεί τι είδους αλλαγές κάνατε στον κώδικα για να προστατέψετε το site σας (από την κάθε επίθεση).

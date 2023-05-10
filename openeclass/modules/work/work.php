@@ -947,13 +947,14 @@ cData;
 			}
 			$uid_2_name = uid_to_name($row['uid']);
 			$stud_am = mysql_fetch_array(db_query("SELECT am from $mysqlMainDb.user WHERE user_id = '$row[uid]'"));
+			$filename = $row['file_name'];
 			$tool_content .= <<<cData
 
       <tr>
         <td align='right' width='4'>$i.</td>
         <td>${uid_2_name} $subContentGroup</td>
         <td width="75" align=\"left\">${stud_am[0]}</td>
-        <td width="180"><a href="work.php?get=${row['id']}">${row['file_name']}</a>
+        <td width="180">${filename}
 cData;
 			if (trim($row['comments'] != '')) {
 				$tool_content .= "
