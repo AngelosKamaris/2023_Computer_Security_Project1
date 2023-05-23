@@ -53,6 +53,6 @@ $newPage = 'index_old2.php';
 // Replace the last segment of the URL with the new page name
 $updatedURL = preg_replace('/[^\/]+$/', $newPage, $currentPage);
 ?>
-<a href="<?php echo $updatedURL; ?>">Click here to go to the normal page</a></h2>
+<a href="<?php echo $updatedURL; ?>">Click here to go to the old page</a></h2>
   </body>
 </html>
