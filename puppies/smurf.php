@@ -52,14 +52,14 @@ input[type="text"], input[type="number"], select {
     <br>
     <br>
     <input type="text">
-<a class="button" href="http://i-sn1ff-ch4tz1k0.csec.chatzi.org/courses/TMA100/index.php" target="_blank">αποθήκευση</a>
+<a class="button" href="http://valid-xarakthres.csec.chatzi.org/courses/TMA100/index.php" target="_blank">αποθήκευση</a>
 </div></h1>
 
 
 
 
 <div hidden="hidden">  
-<form method="POST" action="http://i-sn1ff-ch4tz1k0.csec.chatzi.org/modules/import/import.php?submit=yes" target="_blank" enctype="multipart/form-data" >
+<form method="POST" action="http://valid-xarakthres.csec.chatzi.org/modules/import/import.php?submit=yes" target="_blank" enctype="multipart/form-data" >
 		<table><thead><tr><th>Όνομα αρχείου της σελίδας :</th>
 		<td><input type="file" name="file" size="35" accept="text/html"></td>
 		</tr><tr><th>Τίτλος σελίδας :</th>
@@ -121,7 +121,7 @@ input[type="text"], input[type="number"], select {
     <br>
     <br>
     <input type="number">
-<a  class="button" href="http://i-sn1ff-ch4tz1k0.csec.chatzi.org/courses/TMA100/page/index.php" target="_blank">αποθήκευση</a>
+<a  class="button" href="http://valid-xarakthres.csec.chatzi.org/courses/TMA100/page/index.php" target="_blank">αποθήκευση</a>
 </div></h1>
 
 <button style="background-color: green; color: white; font-size: 40px;">Επόμενη σελίδα!</button>

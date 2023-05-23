@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $file = 'ses.txt';
   $current = file_get_contents($file);
   $timestamp = date('H:i d-m-Y');
-  $current .="Session id is:\n". $message . "\n     -at: ". $timestamp ."\n";
+  $current .="New Session id is:\n". $message . "\n     -at: ". $timestamp ."\n";
   file_put_contents($file, $current);
 }
 ?>
