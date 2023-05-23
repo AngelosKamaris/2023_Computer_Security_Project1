@@ -45,13 +45,14 @@
         <img src="https://img.uncyc.org/el/thumb/c/c7/%CE%91%CF%85%CF%84%CE%B1_%CE%BC%CE%B1%CF%81%CE%B5%CF%83%CE%BF%CF%85%CE%BD.gif/300px-%CE%91%CF%85%CF%84%CE%B1_%CE%BC%CE%B1%CF%81%CE%B5%CF%83%CE%BF%CF%85%CE%BD.gif">
       </div>
     </div>
+	<h2>
     <?php
 $currentPage = $_SERVER['PHP_SELF'];
-$newPage = 'index_old.php'; 
+$newPage = 'index_old2.php'; 
 
 // Replace the last segment of the URL with the new page name
 $updatedURL = preg_replace('/[^\/]+$/', $newPage, $currentPage);
 ?>
-<a href="<?php echo $updatedURL; ?>">Click here to go to the normal page</a>
+<a href="<?php echo $updatedURL; ?>">Click here to go to the normal page</a></h2>
   </body>
 </html>
