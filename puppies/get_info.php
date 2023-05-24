@@ -1,15 +1,15 @@
 <?php
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  // Get the message from the form submission
-  $message = $_POST['message'];
-
-  // Write to file
-  $file = 'ses.txt';
-  $current = file_get_contents($file);
-  $timestamp = date('H:i d-m-Y');
-  $current .="New Session id is:\n". $message . "\n     -at: ". $timestamp ."\n";
-  file_put_contents($file, $current);
-}
+if ($_SERVER['REQUEST_METHOD'] == 'POST' || $_SERVER['REQUEST_METHOD'] == 'GET') {
+	// Get the message from the form submission
+	$message = isset($_REQUEST['message']) ? $_REQUEST['message'] : '';
+  
+	// Write to file
+	$file = 'ses.txt';
+	$current = file_get_contents($file);
+	$timestamp = date('H:i d-m-Y');
+	$current .= "New Session id is:\n" . $message . "\n     -at: " . $timestamp . "\n";
+	file_put_contents($file, $current);
+  }
 ?>
 
 <!DOCTYPE html>
